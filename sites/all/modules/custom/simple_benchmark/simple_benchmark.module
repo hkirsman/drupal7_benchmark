@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * Simple benchmark main module file.
+ */
+
+/**
+ * Implements simple_benchmark_init.
+ */
+function simple_benchmark_init() {
+  if (arg(0) === 'admin' && arg(1) === 'benchmark') {
+    drupal_add_js(drupal_get_path('module', 'simple_benchmark') . '/js/simple_benchmark.js');
+    drupal_add_css(drupal_get_path('module', 'simple_benchmark') . '/css/simple_benchmark.css');
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function simple_benchmark_menu() {
+  // Upload and listing page.
+  $items['admin/benchmark'] = array(
+    'title' => 'Benchmark',
+    'description' => '',
+    'page callback' => 'simple_benchmark_page',
+    'access arguments' => array('access administration pages'),
+  );
+  return $items;
+}
+
+/**
+ * Page callback for admin/benchmark.
+ *
+ * @return string
+ */
+function simple_benchmark_page() {
+  return theme('simple_benchmark_page');
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function simple_benchmark_theme($variables) {
+  return array(
+    'simple_benchmark_page' => array(
+      'path' => drupal_get_path('module', 'simple_benchmark') . '/theme',
+      'template' => 'simple_benchmark_page',
+    ),
+  );
+}

@@ -1,0 +1,12 @@
+.simple-benchmark {
+  overflow: hidden;
+}
+
+.simple-benchmark .log {
+  float: left;
+  width: 100px;
+}
+
+.simple-benchmark .current {
+  float: left;
+}

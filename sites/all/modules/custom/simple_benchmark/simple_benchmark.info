@@ -1,0 +1,3 @@
+name = "Simple Benchmark"
+description = "Allows to ping a certain page and get the times."
+core = "7.x"
