@@ -212,7 +212,14 @@
  *   );
  * @endcode
  */
-$databases = array();
+$databases['default']['default'] = array(
+  'driver' => 'mysql',
+  'database' => 'd7_hardware_comp',
+  'username' => 'd7_hardware_comp',
+  'password' => 'd7_hardware_comp',
+  'host' => 'localhost',
+  'prefix' => '',
+);
 
 /**
  * Access control for update.php script.
