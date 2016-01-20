@@ -2,11 +2,13 @@
   overflow: hidden;
 }
 
-.simple-benchmark .log {
-  float: left;
-  width: 100px;
+.simple-benchmark > .header {
+  margin-bottom: 10px;
 }
 
+.simple-benchmark .log,
 .simple-benchmark .current {
   float: left;
+  width: 100px;
+  min-height: 1px;
 }

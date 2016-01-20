@@ -35,7 +35,8 @@ function simple_benchmark_menu() {
  * @return string
  */
 function simple_benchmark_page() {
-  return theme('simple_benchmark_page');
+  drupal_set_message(t('Simple Benchmark will now do 20 pings and then stop.'));
+  return theme('simple_benchmark_page', array('php_version' => PHP_VERSION, 'platform' => PHP_OS));
 }
 
 
@@ -46,6 +47,7 @@ function simple_benchmark_theme($variables) {
   return array(
     'simple_benchmark_page' => array(
       'path' => drupal_get_path('module', 'simple_benchmark') . '/theme',
+      'variables' => array('php_version' => NULL, 'platform' => NULL),
       'template' => 'simple_benchmark_page',
     ),
   );
