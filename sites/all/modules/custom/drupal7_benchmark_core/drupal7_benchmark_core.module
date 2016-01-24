@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Drupal 7 Benchmark Core feature.
+ */
+
+include_once 'drupal7_benchmark_core.features.inc';
