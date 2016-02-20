@@ -35,8 +35,20 @@ function simple_benchmark_menu() {
  * @return string
  */
 function simple_benchmark_page() {
+  $CACHE = '-';
+  // @todo: need opcache check.
+  if (function_exists('opcache_get_configuration')) {
+    $CACHE = 'OpCache ' . htmlspecialchars(opcache_get_configuration()['version']['version']);
+  }
+  elseif (ini_get('hhvm.jit')) {
+    $CACHE = 'JIT compiler';
+  }
   drupal_set_message(t('Simple Benchmark will now do 20 pings and then stop.'));
-  return theme('simple_benchmark_page', array('php_version' => PHP_VERSION, 'platform' => PHP_OS));
+  return theme('simple_benchmark_page', array(
+    'php_version' => PHP_VERSION,
+    'platform' => PHP_OS,
+    'cache' => $CACHE,
+  ));
 }
 
 
@@ -47,7 +59,11 @@ function simple_benchmark_theme($variables) {
   return array(
     'simple_benchmark_page' => array(
       'path' => drupal_get_path('module', 'simple_benchmark') . '/theme',
-      'variables' => array('php_version' => NULL, 'platform' => NULL),
+      'variables' => array(
+        'php_version' => NULL,
+        'platform' => NULL,
+        'cache' => NULL,
+      ),
       'template' => 'simple_benchmark_page',
     ),
   );
