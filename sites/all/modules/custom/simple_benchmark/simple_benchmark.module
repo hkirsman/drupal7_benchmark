@@ -21,7 +21,7 @@ function simple_benchmark_init() {
 function simple_benchmark_menu() {
   // Upload and listing page.
   $items['admin/benchmark'] = array(
-    'title' => 'Benchmark',
+    'title' => 'D7 Benchmark v1.0',
     'description' => '',
     'page callback' => 'simple_benchmark_page',
     'access arguments' => array('access administration pages'),
