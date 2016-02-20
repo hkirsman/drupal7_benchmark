@@ -9,6 +9,7 @@ dependencies[] = entity
 files[] = tests/registration.test
 files[] = lib/registration.entity.inc
 files[] = lib/registration.metadata.inc
+files[] = lib/registration_type.metadata.inc
 files[] = lib/registration_state.controller.inc
 files[] = lib/registration_state.entity.inc
 files[] = lib/registration_state.ui_controller.inc
@@ -17,9 +18,9 @@ files[] = lib/registration_type.entity.inc
 files[] = lib/registration_type.ui_controller.inc
 
 
-; Information added by Drupal.org packaging script on 2015-10-07
-version = "7.x-1.6"
+; Information added by Drupal.org packaging script on 2016-01-08
+version = "7.x-2.0-beta1"
 core = "7.x"
 project = "registration"
-datestamp = "1444240141"
+datestamp = "1452293215"
 

@@ -13,11 +13,13 @@
  *   object with a node defined.
  */
 function registration_form($form, &$form_state, Registration $registration) {
+  global $user;
+
   $wrapper = entity_metadata_wrapper('registration', $registration);
-  $user = $wrapper->user->value();
   $host = $wrapper->entity->value();
   $state = $wrapper->state->value();
-  $type = $wrapper->type->value();
+  $type = $wrapper->getBundle();
+  $registrant_mail = $wrapper->registrant_mail->value();
 
   $form_state['registration'] = $registration;
 
@@ -29,25 +31,31 @@ function registration_form($form, &$form_state, Registration $registration) {
     }
   }
 
-  $who_options = registration_access_people($registration);
+  // Options for who is registering.
+  $who_options = array();
+
+  if (!empty($user->mail) && user_access("create own $type registration")) {
+    $who_options[REGISTRATION_REGISTRANT_TYPE_SELF] = t('Myself');
+  }
+
+  if (user_access("create $type registration")) {
+    $who_options[REGISTRATION_REGISTRANT_TYPE_OTHER] = t('Other person');
+  }
 
   // Default value for who is registering.
   $who_default = NULL;
-  if (isset($registration->registration_id)) {
-    $who_default = $registration->registrant_type($GLOBALS['user']);
+
+  if (isset($registration->registration_id) && $registrant_mail) {
+    if (!empty($user->mail) && $user->mail === $registrant_mail) {
+      $who_default = REGISTRATION_REGISTRANT_TYPE_SELF;
+    }
+    else {
+      $who_default = REGISTRATION_REGISTRANT_TYPE_OTHER;
+    }
   }
   elseif (count($who_options) == 1) {
     $keys = array_keys($who_options);
     $who_default = reset($keys);
-  }
-
-  // Show a message if there's only one option as we're going to hide the form.
-  if (count($who_options) == 1 && !user_is_anonymous()) {
-    $form['who_message'] = array(
-      '#markup' => '<div class="registration-who-msg">' .
-      t('You are registering: %who', array('%who' => current($who_options))) .
-      '</div>',
-    );
   }
 
   $form['who_is_registering'] = array(
@@ -59,44 +67,51 @@ function registration_form($form, &$form_state, Registration $registration) {
     '#access' => (count($who_options) > 1),
   );
 
-  $form['user'] = array(
-    '#type' => 'textfield',
-    '#title' => t('User'),
-    '#default_value' => ($user ? $user->name : ''),
-    '#maxlength' => 60,
-    '#size' => 30,
-    '#description' => t('Select a user by typing their username to get a list of matches.'),
-    '#autocomplete_path' => 'user/autocomplete',
-    '#access' => isset($who_options[REGISTRATION_REGISTRANT_TYPE_USER]),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="who_is_registering"]' => array('value' => REGISTRATION_REGISTRANT_TYPE_USER),
+  if (isset($who_options[REGISTRATION_REGISTRANT_TYPE_SELF])) {
+    // Show a message for registering yourself.
+    $form['registrant_self'] = array(
+      '#type' => 'container',
+      '#states' => array(
+        'visible' => array(
+          ':input[name="who_is_registering"]' => array('value' => REGISTRATION_REGISTRANT_TYPE_SELF),
+        ),
       ),
-      'required' => array(
-        ':input[name="who_is_registering"]' => array('value' => REGISTRATION_REGISTRANT_TYPE_USER),
-      ),
-    ),
-  );
+    );
 
-  $form['anon_mail'] = array(
+    $form['registrant_self']['content'] = array(
+      '#markup' => '<div class="form-item registration-registrant-self">' .
+        t('You are registering: %mail', array('%mail' => $user->mail)) .
+        '</div>',
+    );
+  }
+
+  $form['registrant_mail'] = array(
     '#type' => 'textfield',
     '#title' => t('Email'),
     '#description' => t('The email to associate with this registration.'),
-    '#default_value' => isset($registration->anon_mail) ? $registration->anon_mail : '',
+    '#default_value' => $registrant_mail,
     '#size' => 40,
     '#maxlength' => 255,
-    '#access' => isset($who_options[REGISTRATION_REGISTRANT_TYPE_ANON]),
+    '#access' => isset($who_options[REGISTRATION_REGISTRANT_TYPE_OTHER]),
     '#states' => array(
       'visible' => array(
-        ':input[name="who_is_registering"]' => array('value' => REGISTRATION_REGISTRANT_TYPE_ANON),
+        ':input[name="who_is_registering"]' => array('value' => REGISTRATION_REGISTRANT_TYPE_OTHER),
       ),
       'required' => array(
-        ':input[name="who_is_registering"]' => array('value' => REGISTRATION_REGISTRANT_TYPE_ANON),
+        ':input[name="who_is_registering"]' => array('value' => REGISTRATION_REGISTRANT_TYPE_OTHER),
       ),
     ),
   );
 
-  $settings = registration_entity_settings($registration->entity_type, $registration->entity_id);
+  // Add a container to hold registrant form fields.
+  $form['registrant_fields'] = array(
+    '#type' => 'container',
+    '#access' => !empty($settings['settings']['upsert_registrants']),
+    '#attributes' => array(
+      'class' => array('registrant-fields'),
+    ),
+  );
+
   $capacity = $settings['capacity'];
   $limit = isset($settings['settings']['maximum_spaces']) ? $settings['settings']['maximum_spaces'] : 1;
   // Just in case it was unset:
@@ -182,6 +197,8 @@ function registration_form($form, &$form_state, Registration $registration) {
  * Validation callback for registration_form().
  */
 function registration_form_validate($form, &$form_state) {
+  global $user;
+
   $registration = $form_state['registration'];
 
   $count = $form_state['values']['count'];
@@ -214,46 +231,20 @@ function registration_form_validate($form, &$form_state) {
 
   // Validate according to who's registering.
   switch ($form_state['values']['who_is_registering']) {
-    case REGISTRATION_REGISTRANT_TYPE_ANON:
-      $form_state['values']['anon_mail'] = trim($form_state['values']['anon_mail']);
-      if (!valid_email_address($form_state['values']['anon_mail'])) {
-        form_set_error('anon_mail', t('The email address is invalid.'));
-      }
-      if (!$allow_multiple && registration_is_registered($registration, $form_state['values']['anon_mail'])) {
-        form_set_error('anon_mail', t('%mail is already registered for this event.',
-          array('%mail' => $form_state['values']['anon_mail'])));
+    case REGISTRATION_REGISTRANT_TYPE_SELF:
+      if (!$allow_multiple && registration_is_registered($registration, $user->mail)) {
+        form_set_error('registrant_self', t('You are already registered for this event.'));
       }
       break;
 
-    case REGISTRATION_REGISTRANT_TYPE_ME:
-      global $user;
-      if (!$allow_multiple && registration_is_registered($registration, NULL, $user->uid)) {
-        form_set_error('user', t('You are already registered for this event.'));
+    case REGISTRATION_REGISTRANT_TYPE_OTHER:
+      $form_state['values']['registrant_mail'] = trim($form_state['values']['registrant_mail']);
+      if (!valid_email_address($form_state['values']['registrant_mail'])) {
+        form_set_error('registrant_mail', t('The email address is invalid.'));
       }
-      break;
-
-    case REGISTRATION_REGISTRANT_TYPE_USER:
-      if (empty($form_state['values']['user'])) {
-        form_set_error('user', t('User name is required.'));
-      }
-      $user = user_load_by_name($form_state['values']['user']);
-      if ($user) {
-        if (!$allow_multiple && registration_is_registered($registration, NULL, $user->uid)) {
-          if (user_access('access user profiles')) {
-            form_set_error('user', t('%user is already registered for this event.', array('%user' => $user->name)));
-          }
-          else {
-            form_set_error('user', t('Registration Failed.'));
-          }
-        }
-      }
-      else {
-        if (user_access('access user profiles')) {
-          form_set_error('user', t('%user is not a valid user.', array('%user' => $form_state['values']['user'])));
-        }
-        else {
-          form_set_error('user', t('Registration Failed.'));
-        }
+      if (!$allow_multiple && registration_is_registered($registration, $form_state['values']['registrant_mail'])) {
+        form_set_error('registrant_mail', t('%mail is already registered for this event.',
+          array('%mail' => $form_state['values']['registrant_mail'])));
       }
       break;
   }
@@ -266,11 +257,17 @@ function registration_form_validate($form, &$form_state) {
  * Submit callback for registration_form().
  */
 function registration_form_submit($form, &$form_state) {
+  global $user;
   $registration = $form_state['registration'];
+  $registration_type = registration_get_types($registration->type);
+  $settings = registration_entity_settings($registration->entity_type, $registration->entity_id);
+  $registrant_entity_type = $registration_type->registrant_entity_type;
+  $registrant_bundle = $registration_type->registrant_bundle;
+  $registrant_entity_info = entity_get_info($registrant_entity_type);
 
   // Set the registration's author uid:
   if (!isset($registration->registration_id)) {
-    $registration->author_uid = $GLOBALS['user']->uid;
+    $registration->author_uid = $user->uid;
   }
   $registration->count = $form_state['values']['count'];
 
@@ -278,21 +275,50 @@ function registration_form_submit($form, &$form_state) {
     $registration->state = $form_state['values']['state'];
   }
 
+  $registrant_mail = NULL;
+
   switch ($form_state['values']['who_is_registering']) {
-    case REGISTRATION_REGISTRANT_TYPE_ANON:
-      $registration->anon_mail = trim($form_state['values']['anon_mail']);
+    case REGISTRATION_REGISTRANT_TYPE_SELF:
+      $registrant_mail = $user->mail;
       break;
 
-    case REGISTRATION_REGISTRANT_TYPE_ME:
-      global $user;
-      $registration->user_uid = $user->uid;
+    case REGISTRATION_REGISTRANT_TYPE_OTHER:
+      $registrant_mail = $form_state['values']['registrant_mail'];
       break;
+  }
 
-    case REGISTRATION_REGISTRANT_TYPE_USER:
-      if ($reg_user = user_load_by_name($form_state['values']['user'])) {
-        $registration->user_uid = $reg_user->uid;
-      }
-      break;
+  // Look up entity by $registrant_mail.
+  $registrant_wrapper = registration_registrant_load_by_mail($registration_type, $registrant_mail);
+
+  if (!empty($settings['settings']['upsert_registrants'])) {
+    if (!$registrant_wrapper) {
+      $registrant_wrapper = registration_registrant_create($registration_type, $registrant_mail);
+    }
+    $registrant = $registrant_wrapper->value();
+
+    $values_excluding_fields = $form_state['values'];
+    if ($registrant_entity_info['fieldable']) {
+      $values_excluding_fields = array_diff_key($form_state['values'], field_info_instances($registrant_entity_type, $registrant_bundle));
+    }
+    $values_in_sub_form = array_intersect_key($values_excluding_fields, $form['registrant_fields']);
+    foreach ($values_in_sub_form as $key => $value) {
+      $registrant->$key = $value;
+    }
+
+    if ($registrant_entity_info['fieldable']) {
+      field_attach_submit($registrant_entity_type, $registrant, $form, $form_state);
+    }
+
+    $registrant_wrapper = entity_metadata_wrapper($registrant_entity_type, $registrant);
+    $registrant_wrapper->save();
+  }
+
+  // Set registrant_id if possible. Otherwise, store just the email.
+  if ($registrant_wrapper) {
+    $registration->registrant_id = $registrant_wrapper->getIdentifier();
+  }
+  else {
+    $registration->anon_mail = $registrant_mail;
   }
 
   // Notify field widgets.
@@ -309,7 +335,15 @@ function registration_form_submit($form, &$form_state) {
 
     // Set redirect to configured value, if there is one.
     if (!empty($reg_config['settings']['confirmation_redirect']) && strlen($reg_config['settings']['confirmation_redirect'])) {
-      $form_state['redirect'] = $reg_config['settings']['confirmation_redirect'];
+      if (module_exists('token')) {
+        $form_state['redirect'] = token_replace($reg_config['settings']['confirmation_redirect'], array(
+          $host->type => $host,
+          'registration' => $registration,
+        ));
+      }
+      else {
+        $form_state['redirect'] = $reg_config['settings']['confirmation_redirect'];
+      }
     }
     else {
       // Redirect to registration:
@@ -641,6 +675,20 @@ function registration_entity_settings_form($form, &$form_state, $settings, $enti
     '#tree' => TRUE,
   );
 
+  $form['settings']['upsert_registrants'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Automatically create and update registrant entities'),
+    '#description' => t('If selected, anonymous registrants will have a registrant entity automatically created and attached when the registration is saved. Additionally, if a module exposes registrant form fields on the registration form, those values will be set on the registrant entity.'),
+    '#default_value' => isset($settings['settings']['upsert_registrants']) ? $settings['settings']['upsert_registrants'] : NULL,
+  );
+
+  $form['settings']['multiple_registrations'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Allow multiple registrations'),
+    '#description' => t('If selected, each person can create multiple registrations for this event.'),
+    '#default_value' => isset($settings['settings']['multiple_registrations']) ? $settings['settings']['multiple_registrations'] : -1,
+  );
+
   $form['settings']['maximum_spaces'] = array(
     '#type' => 'textfield',
     '#title' => t('Spaces allowed'),
@@ -649,13 +697,6 @@ function registration_entity_settings_form($form, &$form_state, $settings, $enti
     '#required' => TRUE,
     '#description' => t('The maximum number of spaces allowed for each registrations. For no limit, use 0. (Default is 1)'),
     '#default_value' => isset($settings['settings']['maximum_spaces']) ? $settings['settings']['maximum_spaces'] : 1,
-  );
-
-  $form['settings']['multiple_registrations'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Allow multiple registrations'),
-    '#description' => t('If selected, each person can create multiple registrations for this event.'),
-    '#default_value' => isset($settings['settings']['multiple_registrations']) ? $settings['settings']['multiple_registrations'] : -1,
   );
 
   $form['settings']['from_address'] = array(
@@ -685,6 +726,21 @@ function registration_entity_settings_form($form, &$form_state, $settings, $enti
     '#required' => FALSE,
     '#default_value' => isset($settings['settings']['confirmation_redirect']) ? $settings['settings']['confirmation_redirect'] : '',
   );
+  // Display the list of available placeholders if token module is installed.
+  if (module_exists('token')) {
+    $form['settings']['confirmation_redirect']['#description'] .= ' ' . t('Tokens may be used.');
+    $form['settings']['token_help'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Available Tokens'),
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#tree' => TRUE,
+      'token_help_details' => array(
+        '#theme' => 'token_tree',
+        '#token_types' => array($entity_type, 'registration'),
+      ),
+    );
+  }
 
   // Allow other modules to add their own custom settings:
   $form['settings'] += module_invoke_all('registration_entity_settings', $settings);
@@ -935,6 +991,13 @@ function registration_state_overview_form($form, &$form_state) {
         '#tree' => FALSE,
         '#default_value' => ($state->default_state) ? $sid : FALSE,
       );
+      $form['state'][$sid]['attended'] = array(
+        '#type' => 'radio',
+        '#name' => 'attended',
+        '#return_value' => $sid,
+        '#tree' => FALSE,
+        '#default_value' => ($state->attended) ? $sid : FALSE,
+      );
       $form['state'][$sid]['weight'] = array(
         '#title' => t('Weight'),
         '#type' => 'weight',
@@ -1033,6 +1096,7 @@ function theme_registration_state_overview_form($variables) {
     array('data' => t('Label !required', array('!required' => '<span class="form-required" title="' . t('This field is required.') . '">*</span>'))),
     array('data' => t('Description')),
     array('data' => t('Default')),
+    array('data' => t('Attended')),
     array('data' => t('Active')),
     array('data' => t('Held')),
     array('data' => t('Show on form')),
@@ -1046,6 +1110,7 @@ function theme_registration_state_overview_form($variables) {
                'label',
                'description',
                'default_state',
+               'attended',
                'active',
                'held',
                'show_on_form',

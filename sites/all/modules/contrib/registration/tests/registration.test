@@ -13,6 +13,9 @@ class RegistrationTestCase extends DrupalWebTestCase {
     $this->registration_type = entity_create('registration_type', array(
       'name' => $this->registration_type_name,
       'label' => $label,
+      'registrant_entity_type' => 'user',
+      'registrant_bundle' => 'user',
+      'registrant_email_property' => 'mail',
     ));
     entity_save('registration_type', $this->registration_type);
 
@@ -241,7 +244,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
     $user_a = $this->drupalCreateUser($permissions);
     $this->createRegistration(array(
       'author_uid' => $user->uid,
-      'user_uid' => $user_a->uid,
+      'registrant_id' => $user_a->uid,
     ));
 
     // Create registration, anonymous user
@@ -352,8 +355,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
     // With permissions
     $permissions = array(
       'create ' . $this->registration_type_name . ' registration',
-      'create ' . $this->registration_type_name . ' registration other users',
-      'create ' . $this->registration_type_name . ' registration other anonymous'
+      'create own ' . $this->registration_type_name . ' registration',
     );
     $this->checkPermissions($permissions, TRUE); // Reset permission cache
     $user = $this->drupalCreateUser($permissions);
@@ -376,8 +378,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
       'view own ' . $this->registration_type_name . ' registration',
       'update own ' . $this->registration_type_name . ' registration',
       'delete own ' . $this->registration_type_name . ' registration',
-      'create ' . $this->registration_type_name . ' registration other users',
-      'create ' . $this->registration_type_name . ' registration other anonymous'
+      'create own ' . $this->registration_type_name . ' registration',
     );
 
     $this->checkPermissions($permissions, TRUE);
@@ -398,7 +399,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
     $this->drupalGet($this->host_entity_path . '/register');
     $this->assertResponse(200, t('Register page loaded.'), 'Registration');
     $registration_form = array(
-      'who_is_registering' => REGISTRATION_REGISTRANT_TYPE_ME,
+      'who_is_registering' => REGISTRATION_REGISTRANT_TYPE_SELF,
     );
     $this->drupalPost($this->host_entity_path . '/register', $registration_form, t('Save Registration'));
     $this->assertText(t('Registration has been saved'), t('Registration saved.'), 'Registration');
@@ -407,7 +408,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
 
     $registration_c = $this->createRegistration(array(
       'author_uid' => $user->uid,
-      'user_uid' => $user->uid,
+      'registrant_id' => $user->uid,
     ));
 
     // Edit a registration
@@ -415,7 +416,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
 //    $this->drupalGet('registration/' . $registration_c->registration_id . '/edit');
 //    $this->assertResponse(200, t('User can access registration edit page.'), 'Registration');
 //    $edit = array(
-//      'who_is_registering' => REGISTRATION_REGISTRANT_TYPE_USER,
+//      'who_is_registering' => REGISTRATION_REGISTRANT_TYPE_OTHER,
 //      'user' => $user_no_permission->name,
 //    );
 //    $this->drupalPost('registration/' . $registration_c->registration_id . '/edit', $edit, t('Save Registration'));
@@ -424,7 +425,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
 //    $this->resetRegistration();
 //    $registration_c = entity_load_single('registration', $registration_c->registration_id);
 //    $this->drupalGet('registration/' . $registration_c->registration_id);
-//    $this->assertEqual($registration_c->user_uid, $user_no_permission->uid, t('Changed user on registration form.'), 'Registration');
+//    $this->assertEqual($registration_c->registrant_id, $user_no_permission->uid, t('Changed user on registration form.'), 'Registration');
 
     // Delete a registration
     $this->drupalGet('registration/' . $registration_c->registration_id . '/delete');
@@ -460,12 +461,9 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
 
     // Create another registration programmatically
     $registration_b = $this->createRegistration(array(
-      'user_uid' => $user_no_permission->uid,
+      'registrant_id' => $user_no_permission->uid,
       'count' => 1,
     ));
-
-    $access_people = registration_access_people($registration_b, $user_no_permission);
-    $this->assertTrue((isset($access_people[REGISTRATION_REGISTRANT_TYPE_ME]) && count($access_people) == 1), t('Check valid people types for unsaved registration.'));
 
     $this->drupalGet('registration/' . $registration_b->registration_id);
     $this->assertResponse(200, t('User with permission can view registration'), 'Registration');
@@ -489,7 +487,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
     $user_b = $this->drupalCreateUser();
     $registration_a = $this->createRegistration(array(
       'author_uid' => $user_a->uid,
-      'user_uid' => $user_b->uid,
+      'registrant_id' => $user_b->uid,
     ));
 
     entity_delete($this->host_entity_type, $this->host_entity_id);
@@ -522,7 +520,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
     // Reassign a users content
     $user = $this->drupalCreateUser();
     $registration_author = $this->createRegistration(array('author_uid' => $user->uid));
-    $registration_people = $this->createRegistration(array('user_uid' => $user->uid));
+    $registration_people = $this->createRegistration(array('registrant_id' => $user->uid));
 
     $edit = array('user_cancel_method' => 'user_cancel_reassign');
     $this->drupalPost('user/' . $user->uid . '/cancel', $edit, t('Cancel account'));
@@ -531,12 +529,12 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
     $this->assertTrue($registration_author_db->author_uid == 0, t('Cancelling user, and reassigning registrations he is author, to anonymous.'));
 
     $registration_people_db = $this->loadRegistration($registration_people->registration_id);
-    $this->assertTrue($registration_people_db->user_uid == NULL, t('Cancelling user, and reassigning registrations he is associated, to anonymous.'));
+    $this->assertTrue($registration_people_db->registrant_id == NULL, t('Cancelling user, and reassigning registrations he is associated, to anonymous.'));
 
     // Delete a users content
     $user = $this->drupalCreateUser();
     $registration_author = $this->createRegistration(array('author_uid' => $user->uid));
-    $registration_people = $this->createRegistration(array('user_uid' => $user->uid));
+    $registration_people = $this->createRegistration(array('registrant_id' => $user->uid));
 
     $edit = array('user_cancel_method' => 'user_cancel_delete');
     $this->drupalPost('user/' . $user->uid . '/cancel', $edit, t('Cancel account'));
@@ -545,7 +543,7 @@ class RegistrationStandardTestCase extends RegistrationTestCase {
     $this->assertFalse($registration_author_db, t('Deleting user, deletes registrations he authored.'));
 
     $registration_people_db = $this->loadRegistration($registration_people->registration_id);
-    $this->assertTrue($registration_people_db->user_uid == NULL, t('Deleting user, and reassigning registrations he is associated, to anonymous.'));
+    $this->assertTrue($registration_people_db->registrant_id == NULL, t('Deleting user, and reassigning registrations he is associated, to anonymous.'));
   }
 }
 
@@ -569,7 +567,7 @@ class RegistrationAPITestCase extends RegistrationTestCase {
   function testHookAccess() {
     $account = $this->drupalCreateUser();
     $crud = array('create', 'view', 'update', 'delete');
-    $registration_values = array('user_uid' => $account->uid);
+    $registration_values = array('registrant_id' => $account->uid);
 
     // Test hook
     $registration = $this->createRegistration($registration_values);
