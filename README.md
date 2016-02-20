@@ -26,4 +26,4 @@ Import the database. Password is d7_hardware_comp (as was defined above).
 mysql -u d7_hardware_comp -p d7_hardware_comp < db.sql
 ```
 
-Open the new site and log in from url /user with **benchmark** being both username and password. Go to url admin/benchmark - benchmark will start as soon as the page is loaded.
+Open the new site and log in. Username and password are both **benchmark** and these are already filled in. After login you are redicted to admin/benchmark and the test will start.
