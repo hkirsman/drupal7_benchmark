@@ -40,6 +40,9 @@ function simple_benchmark_page() {
   // @todo: need opcache check.
   if (function_exists('opcache_get_configuration')) {
     $cache = 'OpCache ' . htmlspecialchars(opcache_get_configuration()['version']['version']);
+    if (ini_get('opcache.enable') == 0) {
+      $cache = '<span style="color: red">' . $cache . ' ' . t('installed but not enabled.') . '</span>';
+    }
   }
   elseif (ini_get('hhvm.jit')) {
     $cache = 'JIT compiler';
