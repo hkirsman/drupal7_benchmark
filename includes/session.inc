@@ -425,7 +425,7 @@ function _drupal_session_destroy($sid) {
 
   // Nothing to do if we are not allowed to change the session.
   if (!drupal_save_session()) {
-    return TRUE;
+    return;
   }
 
   // Delete session data.
@@ -446,8 +446,6 @@ function _drupal_session_destroy($sid) {
   elseif (variable_get('https', FALSE)) {
     _drupal_session_delete_cookie('S' . session_name(), TRUE);
   }
-
-  return TRUE;
 }
 
 /**
