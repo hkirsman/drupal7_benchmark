@@ -33,24 +33,24 @@ function simple_benchmark_menu() {
  * Page callback for admin/benchmark.
  *
  * @return string
+ *   Page html.
  */
 function simple_benchmark_page() {
-  $CACHE = '-';
+  $cache = '-';
   // @todo: need opcache check.
   if (function_exists('opcache_get_configuration')) {
-    $CACHE = 'OpCache ' . htmlspecialchars(opcache_get_configuration()['version']['version']);
+    $cache = 'OpCache ' . htmlspecialchars(opcache_get_configuration()['version']['version']);
   }
   elseif (ini_get('hhvm.jit')) {
-    $CACHE = 'JIT compiler';
+    $cache = 'JIT compiler';
   }
   drupal_set_message(t('Simple Benchmark will now do 20 pings and then stop.'));
   return theme('simple_benchmark_page', array(
     'php_version' => PHP_VERSION,
     'platform' => PHP_OS,
-    'cache' => $CACHE,
+    'cache' => $cache,
   ));
 }
-
 
 /**
  * Implements hook_theme().
