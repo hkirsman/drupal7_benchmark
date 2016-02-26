@@ -37,6 +37,7 @@ function simple_benchmark_menu() {
  */
 function simple_benchmark_page() {
   $cache = '-';
+  $php_version = PHP_VERSION;
   // @todo: need opcache check.
   if (function_exists('opcache_get_configuration')) {
     $cache = 'OpCache ' . htmlspecialchars(opcache_get_configuration()['version']['version']);
@@ -44,12 +45,16 @@ function simple_benchmark_page() {
       $cache = '<span style="color: red">' . $cache . ' ' . t('installed but not enabled.') . '</span>';
     }
   }
-  elseif (ini_get('hhvm.jit')) {
-    $cache = 'JIT compiler';
+  elseif (ini_get('hhvm.jit') || ini_get('hhvm.jit') == 0) {
+    $php_version = 'hhvm-' . ini_get('hphp.compiler_version');
+    $cache = t('JIT compiler');
+    if (ini_get('hhvm.jit') == 0) {
+      $cache = '<span style="color: red">' . $cache . ' ' . t('installed but not enabled.') . '</span>';
+    }
   }
   drupal_set_message(t('Simple Benchmark will now do 20 pings and then stop.'));
   return theme('simple_benchmark_page', array(
-    'php_version' => PHP_VERSION,
+    'php_version' => $php_version,
     'platform' => PHP_OS,
     'cache' => $cache,
   ));
