@@ -423,7 +423,7 @@ table {
 
 td,
 th {
-  padding: 0;
+  padding: 5px;
 }
 
 /* LAYOUT STYLES */
@@ -598,7 +598,6 @@ th {
 
 td {
   font-weight: 300;
-  text-align: center;
   border: 1px solid #ebebeb;
 }
 
@@ -806,9 +805,10 @@ footer a:hover {
 }
 
 /* All Mobile Sizes (devices and browser) */
-@media only screen and (max-width: 767px) {
+@media only screen {
   .inner {
-    width: 93%;
+    padding: 20px;
+    width: 100%;
   }
   header {
     padding: 20px 0;
