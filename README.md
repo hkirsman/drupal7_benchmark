@@ -2,7 +2,7 @@
 Drupal 7 Benchmark
 ---------------------
 
-This is a tool for benchmarking hardware you're Drupal runs on. It's basically just a site with lot of preinstalled contrib modules, nodes and it pings your admin/config page. You have to install the site yourself (basic instructions below), log in with username - **benchmark** - and password - **benchmark**.
+This is a tool for benchmarking hardware you're Drupal runs on. It's basically just a site with lot of preinstalled contrib modules, nodes and it pings your admin/config page. You have to install the site yourself (basic instructions below). Site login username and password are both - **benchmark** but these are prefilled.
 
 Installation
 ------------
