@@ -7,6 +7,7 @@
     <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/tablesorter/blue/style.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
     <!--[if lt IE 9]>
@@ -14,6 +15,10 @@
     <![endif]-->
 
     <title>Drupal 7 benchmark by hkirsman</title>
+
+    <script type="text/javascript" src="javascripts/jquery-latest.js"></script>
+    <script type="text/javascript" src="javascripts/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="javascripts/main.js"></script>
   </head>
 
   <body>
@@ -32,11 +37,10 @@
 
           <p>If you'd like to help then <a href="https://github.com/hkirsman/drupal7_benchmark">install the Drupal 7 benchmark site</a> on your system and submit results to <a href="mailto:hannes.kirsman@wunderkraut.com">hannes.kirsman@wunderkraut.com</a>. Thank you!</p>
 
-          <table cellpadding="0" cellspacing="0">
+          <table cellpadding="0" cellspacing="0" class="tablesorter">
             <thead>
               <tr>
                 <th>#</th>
-                <th>Version</th>
                 <th>Best result (ms)</th>
                 <th>% of fastest</th>
                 <th>Computer</th>
@@ -56,7 +60,6 @@
             <tbody>
               <tr>
                 <th>1</th>
-                <td>1.0</td>
                 <td>45</td>
                 <td>0.00%</td>
                 <td>MacBook Pro 15.4&rdquo; (Mid 2015)</td>
@@ -77,7 +80,6 @@
               </tr>
               <tr>
                 <th>2</th>
-                <td>1.0</td>
                 <td>58</td>
                 <td>28.89%</td>
                 <td>MacBook Pro 15.4&rdquo; (Mid 2015)</td>
@@ -95,7 +97,6 @@
               </tr>
               <tr>
                 <th>3</th>
-                <td>1.0</td>
                 <td>70</td>
                 <td>55.56%</td>
                 <td>MacBook Pro 15.4&rdquo; (Mid 2015)</td>
@@ -113,7 +114,6 @@
               </tr>
               <tr>
                 <th>4</th>
-                <td>1.0</td>
                 <td>150</td>
                 <td>233.33%</td>
                 <td>Macbook Pro (15&rdquo;, Mid 2014)</td>
@@ -131,7 +131,6 @@
               </tr>
               <tr>
                 <th>5</th>
-                <td>1.0</td>
                 <td>152</td>
                 <td>237.78%</td>
                 <td>Macbook Pro (15&rdquo;, Mid 2014)</td>
@@ -149,7 +148,6 @@
               </tr>
               <tr>
                 <th>6</th>
-                <td>1.0</td>
                 <td>172</td>
                 <td>282.22%</td>
                 <td>Custom mini-desktop</td>
@@ -167,7 +165,6 @@
               </tr>
               <tr>
                 <th>7</th>
-                <td>1.0</td>
                 <td>215</td>
                 <td>377.78%</td>
                 <td>MacBook Pro 15.4&rdquo; (Mid 2015)</td>
@@ -185,7 +182,6 @@
               </tr>
               <tr>
                 <th>8</th>
-                <td>1.0</td>
                 <td>249</td>
                 <td>453.33%</td>
                 <td>Dell E6420</td>
@@ -203,7 +199,6 @@
               </tr>
               <tr>
                 <th>9</th>
-                <td>1.0</td>
                 <td>256</td>
                 <td>468.89%</td>
                 <td>Lenovo ThinkPad S3-S440</td>
@@ -221,7 +216,6 @@
               </tr>
               <tr>
                 <th>10</th>
-                <td>1.0</td>
                 <td>311</td>
                 <td>591.11%</td>
                 <td>MacBook Pro (15&rdquo;, Early 2011)</td>
@@ -238,7 +232,6 @@
               </tr>
               <tr>
                 <th>11</th>
-                <td>1.0</td>
                 <td>587</td>
                 <td>1204.44%</td>
                 <td>MacBook Pro (15&rdquo;, Early 2011)</td>
@@ -265,7 +258,5 @@
         </aside>
       </div>
     </div>
-
-
   </body>
 </html>
