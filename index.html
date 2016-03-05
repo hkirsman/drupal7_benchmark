@@ -52,6 +52,212 @@
 <a id="support-or-contact" class="anchor" href="#support-or-contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Support or Contact</h3>
 
 <p>Having trouble with Pages? Check out our <a href="https://help.github.com/pages">documentation</a> or <a href="https://github.com/contact">contact support</a> and we’ll help you sort it out.</p>
+
+          <table cellpadding="0" cellspacing="0">
+            <tr>
+              <th>#</th>
+              <td>D7 benchmark v</td>
+              <td>D7 Benchmark (best)</td>
+              <td>% of fastest</td>
+              <td>Computer</td>
+              <td>Native or VM?</td>
+              <td>CPU</td>
+              <td>RAM native</td>
+              <td>RAM VM</td>
+              <td>PHP parser</td>
+              <td>OP native</td>
+              <td>OP VM</td>
+              <td>Database</td>
+              <td>Server</td>
+              <td>cache</td>
+              <td>Comment</td>
+            </tr>
+            <tr>
+              <th>1</th>
+              <td>1.0</td>
+              <td>45</td>
+              <td>0.00%</td>
+              <td>MacBook Pro 15.4&rdquo; (Mid 2015)</td>
+              <td>VirtualBox 5.0.10</td>
+              <td>i7-4870HQ @ 2.5</td>
+              <td>16</td>
+              <td>4</td>
+              <td>hhvm-3.12.0</td>
+              <td>Mac OS/X</td>
+              <td>Centos 7</td>
+              <td>MariaDB 10.1.11</td>
+              <td>Nginx</td>
+              <td>Vagrant rsync. So it's 45 vs 58 ms - 22% speed increase.
+                But in one of our projects the speed dropped from 220ms to
+                60ms. Using WunderTools HHVM branch without Solr and
+                Varnish</td>
+            </tr>
+            <tr>
+              <th>2</th>
+              <td>1.0</td>
+              <td>58</td>
+              <td>28.89%</td>
+              <td>MacBook Pro 15.4&rdquo; (Mid 2015)</td>
+              <td>VirtualBox 5.0.10</td>
+              <td>i7-4870HQ @ 2.5</td>
+              <td>16</td>
+              <td>4</td>
+              <td>hhvm-3.12.0</td>
+              <td>Mac OS/X</td>
+              <td>Centos 7</td>
+              <td>MariaDB 10.1.11</td>
+              <td>Nginx</td>
+              <td>WunderTools HHVM branch without Solr and Varnish</td>
+            </tr>
+            <tr>
+              <th>3</th>
+              <td>1.0</td>
+              <td>70</td>
+              <td>55.56%</td>
+              <td>MacBook Pro 15.4&rdquo; (Mid 2015)</td>
+              <td>Native</td>
+              <td>i7-4870HQ @ 2.5</td>
+              <td>16</td>
+              <td>hhvm-3.11.0</td>
+              <td>Mac OS/X</td>
+              <td>MariaDB 10.1.11</td>
+              <td>Nginx</td>
+            </tr>
+            <tr>
+              <th>4</th>
+              <td>1.0</td>
+              <td>150</td>
+              <td>233.33%</td>
+              <td>Macbook Pro (15&rdquo;, Mid 2014)</td>
+              <td>VMware Fusion 7.1.3</td>
+              <td>i7-4770HQ @ 2.2</td>
+              <td>16</td>
+              <td>2</td>
+              <td>5.6.18</td>
+              <td>Mac OS/X</td>
+              <td>Centos 6</td>
+              <td>MariaDB</td>
+              <td>Nginx</td>
+              <td>OpCache 7.0.6-dev</td>
+              <td>WunderTools master branch - out-of-the-box config.</td>
+            </tr>
+            <tr>
+              <th>5</th>
+              <td>1.0</td>
+              <td>152</td>
+              <td>237.78%</td>
+              <td>Macbook Pro (15&rdquo;, Mid 2014)</td>
+              <td>VMware Fusion 7.1.3</td>
+              <td>i7-4770HQ @ 2.2</td>
+              <td>16</td>
+              <td>2</td>
+              <td>5.6.18</td>
+              <td>Mac OS/X</td>
+              <td>Centos 6</td>
+              <td>MariaDB</td>
+              <td>Nginx</td>
+              <td>OpCache 7.0.6-dev</td>
+              <td>WunderTools master branch - without varnish and solr.</td>
+            </tr>
+            <tr>
+              <th>6</th>
+              <td>1.0</td>
+              <td>172</td>
+              <td>282.22%</td>
+              <td>Custom mini-desktop. See link in comments.</td>
+              <td>Docker</td>
+              <td>i7-4770S @ 3.1</td>
+              <td>8</td>
+              <td>5.6.18</td>
+              <td>CoreOs</td>
+              <td>Centos 7</td>
+              <td>MariaDB</td>
+              <td>Nginx</td>
+              <td>OpCache 7.0.6-dev</td>
+              <td>See slide 7 for specs:
+                https://docs.google.com/a/wunderkraut.com/presentation/d/1J7-X0hldUqec73KFKS8gnBsxIeEX6g5b6Hl-pykqwvU/edit?usp=sharing</td>
+            </tr>
+            <tr>
+              <th>7</th>
+              <td>1.0</td>
+              <td>215</td>
+              <td>377.78%</td>
+              <td>MacBook Pro 15.4&rdquo; (Mid 2015)</td>
+              <td>Native</td>
+              <td>i7-4770HQ @ 2.2</td>
+              <td>16</td>
+              <td>5.6.14</td>
+              <td>Mac OS/X</td>
+              <td>MySql</td>
+              <td>Apache</td>
+              <td>OpCache 7.0.6-dev</td>
+            </tr>
+            <tr>
+              <th>8</th>
+              <td>1.0</td>
+              <td>249</td>
+              <td>453.33%</td>
+              <td>Dell E6420</td>
+              <td>Native</td>
+              <td>i7-2760QM @ 2.4</td>
+              <td>8</td>
+              <td>7.0.3</td>
+              <td>ArchLinux</td>
+              <td>MariaDB 10.1.11</td>
+              <td>Apache</td>
+              <td>OpCache 7.0.6-dev</td>
+              <td>\var on HDD</td>
+            </tr>
+            <tr>
+              <th>9</th>
+              <td>1.0</td>
+              <td>256</td>
+              <td>468.89%</td>
+              <td>Lenovo ThinkPad S3-S440</td>
+              <td>Native</td>
+              <td>i5-4200U @ 1.6</td>
+              <td>8</td>
+              <td>5.5.9</td>
+              <td>Ubuntu 14</td>
+              <td>MariaDB</td>
+              <td>Nginx</td>
+              <td>opcache 7.0.3</td>
+            </tr>
+            <tr>
+              <th>10</th>
+              <td>1.0</td>
+              <td>311</td>
+              <td>591.11%</td>
+              <td>MacBook Pro (15&rdquo;, Early 2011)</td>
+              <td>Native</td>
+              <td>i7 @ 2.0</td>
+              <td>8</td>
+              <td>5.6.17</td>
+              <td>MAC OS/X</td>
+              <td>MySql</td>
+              <td>Apache</td>
+              <td>OpCache 7.0.6-dev</td>
+            </tr>
+            <tr>
+              <th>11</th>
+              <td>1.0</td>
+              <td>587</td>
+              <td>1204.44%</td>
+              <td>MacBook Pro (15&rdquo;, Early 2011)</td>
+              <td>VirtualBox 5.0.14 with docker</td>
+              <td>i7-2720QM @ 2.2</td>
+              <td>8</td>
+              <td>1</td>
+              <td>5.6.18</td>
+              <td>Mac OS/X</td>
+              <td>Centos 7</td>
+              <td>MariaDB</td>
+              <td>Nginx</td>
+              <td>OpCache 7.0.6-dev</td>
+              <td>Docker managed by docker-machine and Kitematic</td>
+            </tr>
+          </table>
+
         </section>
 
         <aside id="sidebar">
@@ -71,6 +277,6 @@
       </div>
     </div>
 
-  
+
   </body>
 </html>
