@@ -1,1 +1,3 @@
-console.log('This would be the main JS file.');
+$(function() {
+  $(".tablesorter").tablesorter({sortList: [[0,0]], headers: { 14:{sorter: false}}});
+});
