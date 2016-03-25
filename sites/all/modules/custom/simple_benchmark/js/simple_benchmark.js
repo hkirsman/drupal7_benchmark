@@ -11,7 +11,7 @@
 
   var ping = function() {
     var now = new Date().getTime();
-    $.get('/admin/config', function(data) {
+    $.get(Drupal.settings.basePath + 'admin/config', function(data) {
       var then = new Date().getTime();
       var time = then - now;
       timesAll[timesAll.length] = time;
