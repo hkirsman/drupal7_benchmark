@@ -12,6 +12,15 @@ First clone the site:
 git clone https://github.com/hkirsman/drupal7_benchmark.git
 ```
 
+### a) Lando
+
+```
+lando start
+lando db-import db.sql
+```
+
+### b) Local install
+
 Create new database. Here's how you would do it in console after logged in to mysql:
 ```sh
 CREATE DATABASE d7_hardware_comp;
