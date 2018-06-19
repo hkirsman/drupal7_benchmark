@@ -1,0 +1,5 @@
+name: drupal7.benchmark
+recipe: drupal7
+config:
+  php: '7.0'
+  database: mysql:5.6
