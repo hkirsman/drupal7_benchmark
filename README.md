@@ -17,6 +17,7 @@ git clone https://github.com/hkirsman/drupal7_benchmark.git
 ```
 lando start
 lando db-import db.sql
+lando restart # Needed until next Lando, will disable xdebug for extras speed.
 ```
 
 ### b) Local install

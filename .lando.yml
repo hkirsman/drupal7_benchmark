@@ -4,3 +4,9 @@ config:
   php: '7.0'
   via: nginx:1.13
   database: mariadb:10.3
+services:
+  appserver:
+    xdebug: false
+    run_as_root:
+      # Speed up site by removing XDebug totally according to xdebug variable in this file.
+      - sh $LANDO_MOUNT/.lando/xdebug.sh
