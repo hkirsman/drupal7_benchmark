@@ -61,13 +61,19 @@ function adminimal_form_system_theme_settings_alter(&$form, &$form_state) {
     '#default_value' => theme_get_setting('adminimal_theme_skin'),
     '#options' => array(
       'default' => t('Adminimal Default'),
-      //'dark' => t('Dark'),
+      'dark' => t('Adminimal Dark (BETA)'),
       //'flat' => t('Flat'),
-      'material' => t('Material (BETA version)'),
+      'material' => t('Material (BETA)'),
       'alternative' => t('Alternative'),
     ),
     '#description' => t('Select desired skin style. Note that this feature is in beta stage and there might be some issues.'),
     '#required' => FALSE,
+  );
+
+  $form['adminimal_custom']['use_bootstrap_grids'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Bootstrap Grids'),
+    '#default_value' => theme_get_setting('use_bootstrap_grids'),
   );
 
   $form['adminimal_custom']['style_checkboxes'] = array(
@@ -103,6 +109,13 @@ function adminimal_form_system_theme_settings_alter(&$form, &$form_state) {
     '#title' => t('Avoid using "Open Sans" font'),
     '#description' => t('(useful for languages that are not well supported by the "Open sans" font. Like Japanese for example)'),
     '#default_value' => theme_get_setting('avoid_custom_font'),
+  );
+
+  $form['adminimal_custom']['adminimal_ckeditor'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('CKEditor support'),
+    '#description' => t('Loads custom adminimal css skin for CKEditor. Disable this to avoid css conflicts when using other CKEditor skins.'),
+    '#default_value' => theme_get_setting('adminimal_ckeditor'),
   );
 
   $form['adminimal_custom']['use_custom_media_queries'] = array(

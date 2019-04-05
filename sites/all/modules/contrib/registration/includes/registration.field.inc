@@ -20,7 +20,9 @@ function registration_field_info() {
           'capacity' => 0,
           'scheduling' => array(
             'open' => NULL,
+            'open_date_token' => NULL,
             'close' => NULL,
+            'close_date_token' => NULL,
           ),
           'reminder' => array(
             'send_reminder' => 0,
@@ -76,7 +78,7 @@ function registration_field_instance_settings_form($field, $instance) {
     '#type' => 'fieldset',
     '#title' => t('Default Registration settings'),
     '#collapsible' => TRUE,
-    '#description' => t("These settings will be applied when an entity with this field is saved and does not yet have it's own settings applied."),
+    '#description' => t("These settings will be applied when an entity with this field is saved and does not yet have its own settings applied."),
   );
 
   // Unset the save button just in case.

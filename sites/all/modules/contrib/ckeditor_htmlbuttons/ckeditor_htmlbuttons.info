@@ -3,9 +3,9 @@ description = Allows to easily create as many buttons as desired that each one c
 core = 7.x
 configure = admin/config/content/ckeditor-htmlbuttons
 
-; Information added by Drupal.org packaging script on 2015-11-10
-version = "7.x-1.x-dev"
+; Information added by Drupal.org packaging script on 2016-04-02
+version = "7.x-1.0"
 core = "7.x"
 project = "ckeditor_htmlbuttons"
-datestamp = "1447158560"
+datestamp = "1459629540"
 

@@ -12,7 +12,7 @@
  *   The registration object to edit or for a create form an empty registration
  *   object with a node defined.
  */
-function registration_form($form, &$form_state, Registration $registration) {
+function registration_form($form, &$form_state, Registration $registration, $new = TRUE) {
   global $user;
 
   $wrapper = entity_metadata_wrapper('registration', $registration);
@@ -22,6 +22,7 @@ function registration_form($form, &$form_state, Registration $registration) {
   $registrant_mail = $wrapper->registrant_mail->value();
 
   $form_state['registration'] = $registration;
+  $form['#registration_is_new'] = $new;
 
   $settings = registration_entity_settings($registration->entity_type, $registration->entity_id);
 
@@ -149,8 +150,8 @@ function registration_form($form, &$form_state, Registration $registration) {
   $states = registration_get_states_options(array('show_on_form' => TRUE));
 
   // Ensure default state is in options or it won't be set.
-  if (!in_array($default_state->label, $states)) {
-    $states[$default_state->name] = $default_state->label;
+  if (!isset($states[$default_state->name])) {
+    $states[$default_state->name] = t('@state', array('@state' => entity_label('registration_state', $default_state)));
   }
 
   $form['state'] = array(
@@ -359,6 +360,10 @@ function registration_form_submit($form, &$form_state) {
         }
       }
     }
+    // Make sure to Start a Session and save the registration info so we
+    // can check it for anonymous user access.
+    drupal_session_start();
+    $_SESSION['registration_ids'][$registration->identifier()] = $wrapper->anon_access_hash->value();
   }
   else {
     drupal_set_message(t('There was a problem submitting your registration.'));
@@ -464,7 +469,7 @@ function registration_registrations_broadcast_form($form, &$form_state, $entity_
   // Add token support:
   if (module_exists('token')) {
     $form['token_tree'] = array(
-      '#theme' => 'token_tree',
+      '#theme' => 'token_tree_link',
       '#token_types' => array(
         $entity_type,
         'registration',
@@ -561,24 +566,23 @@ function registration_entity_settings_form($form, &$form_state, $settings, $enti
     '#collapsed' => FALSE,
     '#tree' => TRUE,
   );
-
   $form['scheduling']['open'] = array(
     '#type' => 'textfield',
     '#title' => t('Open Date'),
     '#maxlength' => 25,
     '#description' => t('When to automatically open registrations. Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to disable.', array(
-        '%time' => !empty($settings['open']) ? date_format(date_create($settings['open']), 'Y-m-d H:i:s O') : format_date(time(), 'custom', 'Y-m-d H:i:s O'),
-        '%timezone' => !empty($settings['open']) ? date_format(date_create($settings['open']), 'O') : format_date(time(), 'custom', 'O'),
-      )
-    ),
+      '%time' => !empty($settings['open']) ? date_format(date_create($settings['open']), 'Y-m-d H:i:s O') : format_date(time(), 'custom', 'Y-m-d H:i:s O'),
+      '%timezone' => !empty($settings['open']) ? date_format(date_create($settings['open']), 'O') : format_date(time(), 'custom', 'O'),
+    )),
     '#default_value' => !empty($settings['open']) ? $settings['open'] : '',
+    '#weight' => 0,
   );
   if ($date_popup_installed) {
     $form['scheduling']['open']['#type'] = 'date_popup';
     $form['scheduling']['open']['#date_format'] = 'Y-m-d H:i:s O';
     $form['scheduling']['open']['#description'] = t('When to automatically open registrations. (This uses the !timezone.)', array(
       '!timezone' => l(t('site default time zone'), 'admin/config/regional/settings'),
-      ));
+    ));
     unset($form['scheduling']['open']['#maxlength']);
   }
 
@@ -587,19 +591,78 @@ function registration_entity_settings_form($form, &$form_state, $settings, $enti
     '#title' => t('Close Date'),
     '#maxlength' => 25,
     '#description' => t('When to automatically close registrations. Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC. Leave blank to disable.', array(
-        '%time' => !empty($settings['close']) ? date_format(date_create($settings['close']), 'Y-m-d H:i:s O') : format_date(time(), 'custom', 'Y-m-d H:i:s O'),
-        '%timezone' => !empty($settings['close']) ? date_format(date_create($settings['close']), 'O') : format_date(time(), 'custom', 'O'),
-      )
-    ),
+      '%time' => !empty($settings['close']) ? date_format(date_create($settings['close']), 'Y-m-d H:i:s O') : format_date(time(), 'custom', 'Y-m-d H:i:s O'),
+      '%timezone' => !empty($settings['close']) ? date_format(date_create($settings['close']), 'O') : format_date(time(), 'custom', 'O'),
+    )),
     '#default_value' => !empty($settings['close']) ? $settings['close'] : '',
+    '#weight' => 2,
   );
   if ($date_popup_installed) {
     $form['scheduling']['close']['#type'] = 'date_popup';
     $form['scheduling']['close']['#date_format'] = 'Y-m-d H:i:s O';
     $form['scheduling']['close']['#description'] = t('When to automatically close registrations.. (This uses the !timezone.)', array(
       '!timezone' => l(t('site default time zone'), 'admin/config/regional/settings'),
-      ));
+    ));
     unset($form['scheduling']['close']['#maxlength']);
+  }
+
+  // Allow for setting open and close date based on tokens:
+  if (module_exists('token')) {
+    $date_fields = array(
+      array(
+        'name' => 'open',
+        'label' => 'Open Date',
+        'set' => 'scheduling',
+      ),
+      array(
+        'name' => 'close',
+        'label' => 'Close Date',
+        'set' => 'scheduling',
+      ),
+    );
+    foreach ($date_fields as $field) {
+      $input_root = $entity_id ? $field['set'] . '[' : 'instance[settings][default_registration_settings][' . $field['set'] . '][';
+      $base_weight = isset($form[$field['set']][$field['name']]['#weight']) ? $form[$field['set']][$field['name']]['#weight'] : 0;
+      $form[$field['set']][$field['name'] . '_use_token'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Use a token to set the @label.', array('@label' => $field['label'])),
+        '#default_value' => !empty($settings[$field['name'] . '_date_token']) ? TRUE : FALSE,
+        '#weight' => $base_weight - 0.5,
+      );
+      $form[$field['set']][$field['name'] . '_date_token'] = array(
+        '#type' => 'textfield',
+        '#title' => t('@label Source', array('@label' => $field['label'])),
+        '#description' => $form[$field['set']][$field['name']]['#description'] . t(". <i>Choose a token that will return the time in 'Y-m-d H:i:s' format.</i>"),
+        '#default_value' => isset($settings[$field['name'] . '_date_token']) ? $settings[$field['name'] . '_date_token'] : NULL,
+        '#states' => array(
+          'visible' => array(
+            ':input[name="' . $input_root . $field['name'] . '_use_token]"]' => array('checked' => TRUE),
+          ),
+        ),
+        '#weight' => $base_weight,
+      );
+      $form[$field['set']][$field['name']]['#states'] = array(
+        'visible' => array(
+          ':input[name="' . $input_root . $field['name'] . '_use_token]"]' => array('checked' => FALSE),
+        ),
+      );
+      if ($entity_id) {
+        // Only add this validation when on an actual entity: allows for setting
+        // defaults on the field configuration page.
+        $form[$field['set']][$field['name'] . '_date_token']['#element_validate'] = array('token_element_validate');
+        $form[$field['set']][$field['name'] . '_date_token']['#token_types'] = array($entity_type);
+      }
+    }
+    if ($entity_id) {
+      // Add the UI for browsing tokens.
+      $form['scheduling']['_tokens'] = array(
+        '#theme' => 'token_tree_link',
+        '#token_types' => array($entity_type),
+        '#global_types' => FALSE,
+        '#click_insert' => TRUE,
+        '#weight' => 3,
+      );
+    }
   }
 
   $form['reminder'] = array(
@@ -633,10 +696,9 @@ function registration_entity_settings_form($form, &$form_state, $settings, $enti
     '#title' => t('Reminder Date'),
     '#maxlength' => 25,
     '#description' => t('When to send reminders. Format: %time. The date format is YYYY-MM-DD and %timezone is the time zone offset from UTC.', array(
-        '%time' => !empty($settings['open']) ? date_format(date_create($settings['reminder_date']), 'Y-m-d H:i:s O') : format_date(time(), 'custom', 'Y-m-d H:i:s O'),
-        '%timezone' => !empty($settings['open']) ? date_format(date_create($settings['reminder_date']), 'O') : format_date(time(), 'custom', 'O'),
-      )
-    ),
+      '%time' => !empty($settings['open']) ? date_format(date_create($settings['reminder_date']), 'Y-m-d H:i:s O') : format_date(time(), 'custom', 'Y-m-d H:i:s O'),
+      '%timezone' => !empty($settings['open']) ? date_format(date_create($settings['reminder_date']), 'O') : format_date(time(), 'custom', 'O'),
+    )),
     '#default_value' => !empty($settings['reminder_date']) ? $settings['reminder_date'] : '',
   );
   if ($date_popup_installed) {
@@ -644,7 +706,7 @@ function registration_entity_settings_form($form, &$form_state, $settings, $enti
     $form['reminder']['reminder_settings']['reminder_date']['#date_format'] = 'Y-m-d H:i:s O';
     $form['reminder']['reminder_settings']['reminder_date']['#description'] = t('When to send reminders. (This uses the !timezone.)', array(
       '!timezone' => l(t('site default time zone'), 'admin/config/regional/settings'),
-      ));
+    ));
     unset($form['reminder']['reminder_settings']['reminder_date']['#maxlength']);
   }
 
@@ -658,7 +720,7 @@ function registration_entity_settings_form($form, &$form_state, $settings, $enti
   // Add token support:
   if (module_exists('token')) {
     $form['reminder']['reminder_settings']['token_tree'] = array(
-      '#theme' => 'token_tree',
+      '#theme' => 'token_tree_link',
       '#token_types' => array(
         $entity_type,
         'registration',
@@ -843,7 +905,7 @@ function registration_entity_settings_form_submit($form, &$form_state) {
 }
 
 /**
- * Helper to convert registration entity settings form values into a fields.
+ * Helper to convert registration entity settings form values into fields.
  *
  * @param $values
  *
@@ -856,25 +918,41 @@ function registration_convert_form_settings($values) {
     'send_reminder' => isset($values['reminder']['send_reminder']) ? $values['reminder']['send_reminder'] : 0,
     'reminder_date' => NULL,
     'reminder_template' => isset($values['reminder']['reminder_settings']['reminder_template']) ? $values['reminder']['reminder_settings']['reminder_template'] : NULL,
-    'settings' => serialize($values['settings']),
+    'settings' => $values['settings'],
     'open' => NULL,
     'close' => NULL,
   );
+  if (module_exists('token')) {
+    $open_token = isset($values['scheduling']['open_date_token']) ? $values['scheduling']['open_date_token'] : '';
+    $close_token = isset($values['scheduling']['close_date_token']) ? $values['scheduling']['close_date_token'] : '';
+    $fields['open_date_token'] = $open_token;
+    $fields['close_date_token'] = $close_token;
+  }
+
+  $date_fields = array(
+    array(
+      'name' => 'open',
+      'label' => 'Open Date',
+      'set' => 'scheduling',
+    ),
+    array(
+      'name' => 'close',
+      'label' => 'Close Date',
+      'set' => 'scheduling',
+    ),
+  );
+  foreach ($date_fields as $field) {
+    if (!empty($values[$field['set']][$field['name']])) {
+      $fields[$field['name']] = date('Y-m-d H:i:s', strtotime($values[$field['set']][$field['name']]));
+    }
+  }
 
   // Reminder: Reminder Date:
   if (!empty($values['reminder']['reminder_settings']['reminder_date'])) {
     $fields['reminder_date'] = date('Y-m-d H:i:s', strtotime($values['reminder']['reminder_settings']['reminder_date']));
   }
 
-  // Scheduling: open date:
-  if (!empty($values['scheduling']['open'])) {
-    $fields['open'] = date('Y-m-d H:i:s', strtotime($values['scheduling']['open']));
-  }
-
-  // Scheduling: close date:
-  if (!empty($values['scheduling']['close'])) {
-    $fields['close'] = date('Y-m-d H:i:s', strtotime($values['scheduling']['close']));
-  }
+  $fields['settings'] = serialize($fields['settings']);
 
   return $fields;
 }
@@ -1058,7 +1136,7 @@ function registration_state_overview_form_validate($form, &$form_state) {
   // Ensure each state is only "active" or "pending" – not both.
   foreach ($form_state['input']['state'] as $state) {
     if ($state['active'] && $state['held']) {
-      form_set_error('state', 'A state can only be "active" or "pending" – not both. Update the "' . $state['label'] . '" state to resolve this warning.');
+      form_set_error('state', 'A state can only be "active" or "held" – not both. Update the "' . $state['label'] . '" state to resolve this warning.');
     }
   }
 }

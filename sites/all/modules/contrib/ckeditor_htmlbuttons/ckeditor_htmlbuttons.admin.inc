@@ -10,6 +10,7 @@
  */
 function ckeditor_htmlbuttons_overview() {
   $rows = array();
+  $help = '';
   // Load the buttons and display them on the admin form.
   $buttons = ckeditor_htmlbutton_load_all();
   foreach ($buttons as $button) {
@@ -62,10 +63,10 @@ function ckeditor_htmlbuttons_overview() {
     $help = t('Here you can create custom html toolbar buttons. The buttons will need to be enabled from the !profiles settings.', $help_variables) . '</p>';
   }
   else {
-    $help = t('You need to install either !ckeditor or !wysiwyg module before the buttons you define here are possible to use.', array(
+    drupal_set_message(t('You need to install either !ckeditor or !wysiwyg module before the buttons you define here are possible to use.', array(
       '!ckeditor' => l(t('CKEditor'), 'https://www.drupal.org/project/ckeditor'),
       '!wysiwyg' => l(t('Wysiwyg'), 'https://www.drupal.org/project/wysiwyg'),
-    ));
+    )), 'error');
   }
 
   return '<p>' . $help . '</p>' . theme('table', array(
@@ -144,6 +145,7 @@ function ckeditor_htmlbuttons_button_form($something, $form_state, $button = NUL
     '#rows' => 10,
     '#default_value' => isset($form_state['values']['html']) ? $form_state['values']['html'] : '',
     '#required' => TRUE,
+    '#description' => t('Write HTML for template here and optionally leave space in the tag if you want it to be wrappable (e.g. &lt;strong&gt; &lt;/strong&gt; not &lt;strong&gt;&lt;/strong&gt;)'),
   );
   $form['submit'] = array(
     '#type' => 'submit',

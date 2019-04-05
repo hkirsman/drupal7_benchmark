@@ -58,7 +58,7 @@ function registration_entity_info() {
     'registration_type' => array(
       'label' => t('Registration type'),
       'entity class' => 'RegistrationType',
-      'metadata controller class' => 'RegistrationTypeMetadataController',
+      'metadata controller class' => 'EntityDefaultMetadataController',
       'controller class' => 'RegistrationTypeController',
       'base table' => 'registration_type',
       'fieldable' => FALSE,
@@ -115,35 +115,6 @@ function registration_entity_info() {
 }
 
 /**
- * Implements hook_schema_alter().
- */
-function registration_schema_alter(&$schema) {
-  if (drupal_get_installed_schema_version('registration') >= 7200) {
-    $schema['registration_type']['fields']['registrant_entity_type'] = array(
-      'type' => 'varchar',
-      'length' => 128,
-      'not null' => TRUE,
-      'default' => 'user',
-      'description' => 'The machine name of the registrant entity\'s type.',
-    );
-    $schema['registration_type']['fields']['registrant_bundle'] = array(
-      'type' => 'varchar',
-      'length' => 128,
-      'not null' => TRUE,
-      'default' => 'user',
-      'description' => 'The machine name of the registrant entity\'s bundle.',
-    );
-    $schema['registration_type']['fields']['registrant_email_property'] = array(
-      'type' => 'varchar',
-      'length' => 128,
-      'not null' => TRUE,
-      'default' => 'mail',
-      'description' => 'The machine name of the registrant entity\'s email property.',
-    );
-  }
-}
-
-/**
  * Implements hook_entity_info_alter().
  */
 function registration_entity_info_alter(&$entity_info) {
@@ -189,23 +160,23 @@ function registration_menu() {
     'title arguments' => array(1),
     'page callback' => 'registration_view',
     'page arguments' => array(1),
-    'access callback' => 'entity_access',
-    'access arguments' => array('view', 'registration', 1),
+    'access callback' => 'registration_own_access',
+    'access arguments' => array('view', 1),
   );
   $items['registration/%registration/view'] = array(
     'title' => 'View',
     'page callback' => 'registration_view',
     'page arguments' => array(1),
-    'access callback' => 'entity_access',
-    'access arguments' => array('view', 'registration', 1),
+    'access callback' => 'registration_own_access',
+    'access arguments' => array('view', 1),
     'type' => MENU_DEFAULT_LOCAL_TASK,
   );
   $items['registration/%registration/edit'] = array(
     'title' => 'Edit',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('registration_form', 1),
-    'access callback' => 'entity_access',
-    'access arguments' => array('update', 'registration', 1),
+    'page arguments' => array('registration_form', 1, FALSE),
+    'access callback' => 'registration_own_access',
+    'access arguments' => array('update', 1),
     'weight' => 10,
     'type' => MENU_LOCAL_TASK,
   );
@@ -213,10 +184,17 @@ function registration_menu() {
     'title' => 'Delete',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('registration_delete_confirm', 1),
-    'access callback' => 'entity_access',
-    'access arguments' => array('delete', 'registration', 1),
+    'access callback' => 'registration_own_access',
+    'access arguments' => array('delete', 1),
     'type' => MENU_CALLBACK,
   );
+  $items['registration/%registration/%/%'] = array(
+      'title' => 'Registration Access Check',
+      'page callback' => 'registration_access_check_redirect',
+      'page arguments' => array(1,2),
+      'access callback' => 'registration_own_access',
+      'access arguments' => array(2, 1, 3),
+    );
 
   // Entity local tasks.
   foreach (registration_get_registration_instances() as $instance) {
@@ -295,6 +273,79 @@ function registration_menu() {
   }
 
   return $items;
+}
+
+/**
+ * Hash function used for enabling anonymous access to registrations.
+ *
+ * Similar to user_pass_rehash().
+ */
+function registration_anonymous_access_hash($registration, $options = array(), $name = "", $type = "") {
+  return drupal_hmac_base64($registration->created . $registration->identifier(), drupal_get_hash_salt() . $registration->anon_mail);
+}
+
+/**
+ * Get a full link to view an anonymous registration, with access hash.
+ *
+ * For backwards-compatibility with longstanding issue queue solution.
+ */
+function registration_anonymous_link_get($registration, $options = array(), $name = "", $type = "") {
+  // Create a link that can be used to access an anonymously created event from anywhere.
+  $path = entity_uri('registration', $registration);
+  $url = url($path['path'] . '/view/' . registration_anonymous_access_hash($registration), array('absolute' => TRUE));
+  return $url;
+}
+
+/**
+ * Helper function to run a hashed URL through a permissions check first.
+ */
+function registration_access_check_redirect($registration, $function) {
+  drupal_goto('registration/' . $registration->identifier() . '/' . $function);
+}
+
+/**
+ * Define our own view/update/delete access.
+ *
+ * Check access based on the entity permissions for all users
+ * Also check that an anonymous user created the registration via session token.
+ */
+function registration_own_access($action, $registration, $hash = NULL) {
+  if (entity_access($action, 'registration', $registration)) {
+    // Only check session information if this is an anonymous user.
+    if (!user_is_anonymous()) {
+      // They have access to the registration and they aren't anonymous.
+      return TRUE;
+    }
+    // Anonymous has access, and we are anonymous. Check for a valid hash.
+    $in_session = FALSE;
+    // If we were not handed a hash, check for it in the session or a query
+    // parameter.
+    if (!$hash) {
+      // If they made it or validated already this session:
+      if (isset($_SESSION['registration_ids'][$registration->registration_id])) {
+        $in_session = TRUE;
+        $hash = $_SESSION['registration_ids'][$registration->registration_id];
+      }
+      // If there isn't a Session or this registration isn't in it, see if a
+      // hash is provided in the query param to verify this person is the one
+      // registered. (For backwards compatibility with patch from
+      // https://www.drupal.org/node/2224159).
+      else {
+        global $_SESSION;
+        $params = drupal_get_query_parameters();
+        if (isset($params['registration_hash'])) {
+          $hash = $params['registration_hash'];
+        }
+      }
+    }
+    if ($hash === registration_anonymous_access_hash($registration)) {
+      if (!$in_session) {
+        $_SESSION['registration_ids'][$registration->registration_id] = $hash;
+      }
+      return TRUE;
+    }
+  }
+  return FALSE;
 }
 
 /**
@@ -965,8 +1016,9 @@ function theme_registration_link($variables) {
   $output = '';
   $registration_label = $variables['label'];
   $registration_path = $variables['path'];
+  $registration_options = isset($variables['options']) ? $variables['options'] : array();
 
-  $output .= l($registration_label, $registration_path);
+  $output .= l($registration_label, $registration_path, $registration_options);
 
   return $output;
 }
@@ -1093,7 +1145,7 @@ function registration_send_broadcast($entity_type, $entity_id, $subject, $messag
       $result = drupal_mail('registration', 'broadcast',
         $registrant_mail, $language, $params, $from
       );
-      if ($result['result']) {
+      if ($result['result'] !== FALSE) {
         $success_count++;
       }
       else {
@@ -1194,10 +1246,10 @@ function registration_cron() {
 
       // Determine whether hold expire minimum time time has elapsed.
       // Setting for how long the hold lasts is stored on the registration type entity.
-      $registration_type = entity_load_single('registration_type', $registration_wrapper->entity_id->value());
+      $registration_type = registration_type_load($registration_wrapper->getBundle());
       // Change registration state if hold has expired.
       // Expiration time is in hours - hence the multiplication.
-      if ((time() - ($registration_type->held_expire * 60 * 60)) > $result->updated) {
+      if ($registration_type->held_expire !== '0' && (time() - ($registration_type->held_expire * 60 * 60)) > $registration->updated) {
         // Set registration state to what is configured for its registration type.
         $registration_wrapper->state->set($registration_type->held_expire_state);
         $registration_wrapper->save();
@@ -1248,6 +1300,7 @@ function registration_status($entity_type, $entity_id, $reset = FALSE, $spaces =
   }
 
   $settings = registration_entity_settings($entity_type, $entity_id, $reset);
+  registration_interpret_settings($settings, $entity_type, $entity);
   $status = $settings['status'];
   $open = isset($settings['open']) ? strtotime($settings['open']) : NULL;
   $close = isset($settings['close']) ? strtotime($settings['close']) : NULL;
@@ -1284,6 +1337,8 @@ function registration_status($entity_type, $entity_id, $reset = FALSE, $spaces =
   $context = array(
     'entity_type' => $entity_type,
     'entity_id' => $entity_id,
+    'spaces' => $spaces,
+    'registration_id' => $registration_id,
     'errors' => &$errors
   );
 
@@ -1617,7 +1672,7 @@ function registration_registrant_create($registration_type, $mail = NULL) {
 
   $values = array();
   $info = entity_get_info($registrant_entity_type);
-  if (isset($info['entity keys']['bundle'])) {
+  if (!empty($info['entity keys']['bundle'])) {
     $values[$info['entity keys']['bundle']] = $registration_type->registrant_bundle;
   }
   $registrant = entity_create($registrant_entity_type, $values);
@@ -1637,8 +1692,8 @@ function registration_registrant_create($registration_type, $mail = NULL) {
 /**
  * Return all registration state entities.
  *
- * @param bool $active
- * @param bool $show_on_form
+ * @param array $conditions - key => value array of properties and conditions
+ *   that restrict what registration_state entities will be returned
  *
  * @return array
  *   An array of registration state entities.
@@ -1802,7 +1857,7 @@ function registration_property_registrant_mail_get($registration, array $options
   if (isset($registrant->$property)) {
     $value = $registrant->$property->value();
     // If we have multiple values, just grab the first one:
-    if (isset($value[0])) {
+    if (is_array($value) && isset($value[0])) {
       $value = $value[0];
     }
     if ($field_col && isset($value[$field_col])) {
@@ -2070,4 +2125,19 @@ function _registration_translate($name, $string, $langcode = NULL) {
  */
 function _registration_translate_update($name, $string, $langcode = NULL) {
   return function_exists('i18n_string') ? i18n_string('registration:' . $name, $string, array('update' => TRUE, 'langcode' => $langcode)) : FALSE;
+}
+
+/**
+ * Process registration settings to provide usable values.
+ *
+ * Initial purpose is to interpret dates that are using tokens rather than raw
+ * dates.
+ */
+function registration_interpret_settings(&$settings, $entity_type, $entity) {
+  $fields = array('open', 'close');
+  foreach ($fields as $field) {
+    if (!empty($settings[$field . '_date_token'])) {
+      $settings[$field] = token_replace($settings[$field . '_date_token'], array($entity_type => $entity), array('clear' => TRUE));
+    }
+  }
 }

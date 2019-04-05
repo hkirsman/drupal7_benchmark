@@ -337,8 +337,11 @@ function date_combo_element_process($element, &$form_state, $form) {
     '#date_label_position' => $instance['widget']['settings']['label_position'],
   );
 
-  $description = !empty($element['#description']) ? t($element['#description']) : '';
-  unset($element['#description']);
+  // Date repeat is a multiple value field. So the description is removed from
+  // the single element earlier. Let's get it back.
+  if (isset($element['show_repeat_settings']) && !empty($element['value']['#instance']['description'])) {
+    $element['#description'] = $element['value']['#instance']['description'];
+  }
 
   // Give this element the right type, using a Date API
   // or a Date Popup element type.
@@ -383,8 +386,7 @@ function date_combo_element_process($element, &$form_state, $form) {
     $element[$to_field]['#prefix'] = '';
     // Users with JS enabled will never see initially blank values for the end
     // date (see Drupal.date.EndDateHandler()), so hide the message for them.
-    $description .= '<span class="js-hide"> ' . t("Empty 'End date' values will use the 'Start date' values.") . '</span>';
-    $element['#fieldset_description'] = $description;
+    $element['#description'] .= '<span class="js-hide"> ' . t("Empty 'End date' values will use the 'Start date' values.") . '</span>';
     if ($field['settings']['todate'] == 'optional') {
       $element[$to_field]['#states'] = array(
         'visible' => array(
@@ -394,9 +396,6 @@ function date_combo_element_process($element, &$form_state, $form) {
         ),
       );
     }
-  }
-  else {
-    $element[$from_field]['#description'] = $description;
   }
 
   // Create label for error messages that make sense in multiple values
@@ -474,6 +473,12 @@ function date_combo_validate($element, &$form_state) {
   $form_values = drupal_array_get_nested_value($form_state['values'], $element['#field_parents']);
   $form_input = drupal_array_get_nested_value($form_state['input'], $element['#field_parents']);
 
+  // Programmatically calling drupal_submit_form() does not always add the date
+  // combo to $form_state['input'].
+  if (empty($form_input[$field_name]) && !empty($form_values[$field_name])) {
+    form_set_value($element, $element['#date_items'], $form_state);
+    return;
+  }
   // If the whole field is empty and that's OK, stop now.
   if (empty($form_input[$field_name]) && !$element['#required']) {
     return;

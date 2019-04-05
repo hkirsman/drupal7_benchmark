@@ -33,3 +33,20 @@ function ckeditor_htmlbuttons_schema() {
   );
   return $schema;
 }
+
+/**
+ * Implements hook_requirements().
+ */
+function ckeditor_htmlbuttons_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+  if ($phase == 'runtime' && !module_exists('ckeditor') && !module_exists('wysiwyg')) {
+    $requirements['ckeditor_htmlbuttons'] = array(
+      'title' => $t('CKEditor HTML Buttons'),
+      'value' => $t('CKEditor HTML Buttons requires either the <a href="@c_url">CKEditor</a> or <a href="@w_url">Wysiwyg</a> module to be enabled.',
+        array('@c_url' => 'https://www.drupal.org/project/ckeditor', '@w_url' => 'https://www.drupal.org/project/wysiwyg')),
+      'severity' => REQUIREMENT_WARNING,
+    );
+  }
+  return $requirements;
+}

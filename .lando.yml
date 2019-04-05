@@ -4,7 +4,7 @@ config:
   via: nginx
 services:
   appserver:
-    type: php:7.0
+    type: php:7.2
     xdebug: false
   database:
     type: mariadb:10.2
