@@ -2,6 +2,6 @@ name: drupal7.benchmark
 recipe: drupal7
 config:
   webroot: web
-  php: '7.2'
+  php: '7.3'
   via: nginx
   database: mariadb:10.2
