@@ -5,3 +5,9 @@ config:
   php: '7.3'
   via: nginx
   database: mariadb:10.2
+tooling:
+  drush:
+    service: appserver
+    cmd:
+      - "drush --root=/app/web --uri=http://drupal7.benchmark.lndo.site"
+
