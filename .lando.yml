@@ -2,12 +2,15 @@ name: drupal7.benchmark
 recipe: drupal7
 config:
   webroot: web
-  php: '7.3'
+  php: '7.4'
   via: nginx
   database: mariadb:10.2
+services:
+  appserver:
+    # Add Mutagen support - fast host <-> container file sharing in Mac.
+    app_mount: delegated
 tooling:
   drush:
     service: appserver
     cmd:
       - "drush --root=/app/web --uri=http://drupal7.benchmark.lndo.site"
-
