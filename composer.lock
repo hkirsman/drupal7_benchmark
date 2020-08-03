@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "305f5c0dfaef54e47062a326e5753f48",
+    "content-hash": "5df961bef4924871f8d04504dd5019a2",
     "packages": [
         {
             "name": "composer/installers",
@@ -2572,17 +2572,17 @@
         },
         {
             "name": "drupal/devel",
-            "version": "1.5.0",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/devel.git",
-                "reference": "7.x-1.5"
+                "reference": "7.x-1.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/devel-7.x-1.5.zip",
-                "reference": "7.x-1.5",
-                "shasum": "9065fe4fbaa260e087b4d2b1876bf8a768fade13"
+                "url": "https://ftp.drupal.org/files/projects/devel-7.x-1.7.zip",
+                "reference": "7.x-1.7",
+                "shasum": "dbbd9a2e1a45b16467a26d0db2887a0c3dd6a63b"
             },
             "require": {
                 "drupal/drupal": "~7.0"
@@ -2590,8 +2590,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "7.x-1.5",
-                    "datestamp": "1524009780",
+                    "version": "7.x-1.7",
+                    "datestamp": "1550852888",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
