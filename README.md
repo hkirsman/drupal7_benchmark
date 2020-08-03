@@ -17,6 +17,7 @@ git clone https://github.com/hkirsman/drupal7_benchmark.git
 ```
 cd drupal7_benchmark
 lando start
+lando composer install
 lando db-import db.sql
 lando restart # Needed until next Lando, will disable xdebug for extras speed.
 ```
@@ -30,6 +31,11 @@ CREATE USER 'd7_hardware_comp'@'localhost' IDENTIFIED BY 'd7_hardware_comp';
 GRANT ALL PRIVILEGES ON d7_hardware_comp.* TO 'd7_hardware_comp'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
+```
+
+Install Drupal
+```
+lando composer install
 ```
 
 Import the database. Password is d7_hardware_comp (as was defined above).

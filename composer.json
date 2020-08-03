@@ -1,0 +1,311 @@
+{
+    "name": "drupal-composer/drupal-project",
+    "description": "Project template for Drupal 7 projects with composer",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "",
+            "role": ""
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/7"
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "davatron5000/fitvids.js",
+                "version": "1.1.0",
+                "type": "drupal-library",
+                "dist": {
+                    "url": "https://github.com/davatron5000/FitVids.js/archive/v1.1.0.zip",
+                    "type": "zip"
+                },
+                "extra": {
+                    "installer-name": "fitvids"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "niklasvh/html2canvas",
+                "version": "0.4.1",
+                "type": "drupal-library",
+                "dist": {
+                    "url": "https://github.com/niklasvh/html2canvas/releases/download/0.4.1/html2canvas.js",
+                    "type": "file"
+                },
+                "extra": {
+                    "installer-name": "html2canvas"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "malsup/cycle",
+                "version": "3.0.3",
+                "type": "drupal-library",
+                "dist": {
+                    "url": "https://github.com/malsup/cycle/archive/3.0.3.zip",
+                    "type": "zip"
+                },
+                "extra": {
+                    "installer-name": "jquery.cycle"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "serbanghita/mobile-detect",
+                "version": "2.8.17",
+                "type": "drupal-library",
+                "dist": {
+                    "url": "https://github.com/serbanghita/Mobile-Detect/archive/2.8.17.zip",
+                    "type": "zip"
+                },
+                "extra": {
+                    "installer-name": "Mobile_Detect"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "moxiecode/plupload",
+                "version": "1.5.7",
+                "type": "drupal-library",
+                "dist": {
+                    "url": "https://github.com/moxiecode/plupload/archive/1.5.7.zip",
+                    "type": "zip"
+                },
+                "extra": {
+                    "installer-name": "plupload"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "mustangostang/spyc",
+                "version": "0.5.1",
+                "type": "drupal-library",
+                "dist": {
+                  "url": "https://github.com/mustangostang/spyc/archive/0.5.1.zip",
+                  "type": "zip"
+                },
+                "extra": {
+                  "installer-name": "spyc"
+                }
+            }
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "ext-curl": "*",
+        "ext-gd": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-xml": "*",
+        "composer/installers": "^1.2",
+        "composer/semver": "^1.4",
+        "cweagans/composer-patches": "^1.6.5",
+        "davatron5000/fitvids.js": "1.1.0",
+        "drupal-composer/preserve-paths": "^0.1",
+        "drupal/addressfield": "1.2",
+        "drupal/addressfield_tokens": "1.5",
+        "drupal/admin_menu": "3.0-rc5",
+        "drupal/admin_views": "1.5",
+        "drupal/adminimal_admin_menu": "1.7",
+        "drupal/adminimal_theme": "1.23",
+        "drupal/back_to_top": "1.5",
+        "drupal/backup_migrate": "3.1",
+        "drupal/batch_indexing": "1.0",
+        "drupal/better_exposed_filters": "3.2",
+        "drupal/block_class": "2.3",
+        "drupal/book_access": "2.1",
+        "drupal/book_helper": "1.0-beta3",
+        "drupal/book_search": "1.0",
+        "drupal/boost": "1.0",
+        "drupal/captcha": "1.3",
+        "drupal/ckeditor_htmlbuttons": "1.x-dev",
+        "drupal/ckeditor_lite": "1.0-rc3",
+        "drupal/ckeditor_styles": "1.0-alpha1",
+        "drupal/colorfield": "1.1",
+        "drupal/composer_autoloader": "^1.0",
+        "drupal/computed_field": "1.0",
+        "drupal/conditional_fields": "3.0-alpha2",
+        "drupal/conditional_styles": "2.2",
+        "drupal/connector": "1.0-beta2",
+        "drupal/content_access": "1.2-beta2",
+        "drupal/context": "3.6",
+        "drupal/ctools": "1.9",
+        "drupal/date": "2.10-beta1",
+        "drupal/delta": "3.0-beta11",
+        "drupal/devel": "1.5",
+        "drupal/diff": "3.2",
+        "drupal/draggable_captcha": "1.2",
+        "drupal/drupal": "7.43",
+        "drupal/ds": "2.13",
+        "drupal/elysia_cron": "2.1",
+        "drupal/email": "1.3",
+        "drupal/empty_page": "1.0",
+        "drupal/entity": "1.6",
+        "drupal/entity_dialog": "1.0",
+        "drupal/entity_token": "1.6",
+        "drupal/entityreference": "1.1",
+        "drupal/environment_indicator": "2.8",
+        "drupal/eu_cookie_compliance": "1.14",
+        "drupal/expire": "2.0-rc4",
+        "drupal/features": "2.7",
+        "drupal/field_collection": "1.0-beta11",
+        "drupal/field_collection_tabs_widget": "1.4",
+        "drupal/field_group": "1.5",
+        "drupal/file_entity": "2.0-beta2",
+        "drupal/file_entity_inline": "1.0-beta1",
+        "drupal/file_lock": "2.0",
+        "drupal/filefield_paths": "1.0",
+        "drupal/fitvids": "1.17",
+        "drupal/forum_search": "1.x-dev",
+        "drupal/globalredirect": "1.5",
+        "drupal/google_analytics": "2.1",
+        "drupal/html2canvas": "1.1",
+        "drupal/html_title": "1.4",
+        "drupal/http_client": "2.4",
+        "drupal/i18n": "1.13",
+        "drupal/ife": "2.0-alpha2",
+        "drupal/image_link_formatter": "1.0",
+        "drupal/image_resize_filter": "1.16",
+        "drupal/image_url_formatter": "1.4",
+        "drupal/imce": "1.9",
+        "drupal/imce_mkdir": "1.0",
+        "drupal/imce_plupload": "2.0",
+        "drupal/imce_rename": "1.3",
+        "drupal/imce_wysiwyg": "1.0",
+        "drupal/jquery_update": "3.0-alpha3",
+        "drupal/l10n_update": "2.0",
+        "drupal/libraries": "2.2",
+        "drupal/link": "1.4",
+        "drupal/local_tasks_fixed_to_bottom": "1.3",
+        "drupal/login_destination": "1.4",
+        "drupal/logintoboggan": "1.5",
+        "drupal/mailsystem": "3.0-alpha1",
+        "drupal/menu_block": "2.7",
+        "drupal/menu_force": "1.2",
+        "drupal/menu_target": "1.4",
+        "drupal/mimemail": "1.0-beta4",
+        "drupal/mobile_detect": "1.0-alpha1",
+        "drupal/module_filter": "2.0",
+        "drupal/mpac": "1.2",
+        "drupal/multiupload_filefield_widget": "1.13",
+        "drupal/noreqnewpass": "1.2",
+        "drupal/oauth": "3.2",
+        "drupal/oauthconnector": "1.0-beta2",
+        "drupal/pagepreview": "1.0-alpha1",
+        "drupal/panels": "3.5",
+        "drupal/panels_everywhere": "1.0-rc2",
+        "drupal/pathauto": "1.3",
+        "drupal/phone": "1.0-beta1",
+        "drupal/plupload": "1.7",
+        "drupal/rabbit_hole": "2.23",
+        "drupal/redirect": "1.0-rc3",
+        "drupal/registration": "2.0-beta1",
+        "drupal/reroute_email": "1.2",
+        "drupal/rules": "2.12",
+        "drupal/search_krumo": "1.6",
+        "drupal/searchindex_wipe": "1.0",
+        "drupal/security_review": "1.2",
+        "drupal/services": "3.13",
+        "drupal/session_limit": "2.1",
+        "drupal/simplify": "3.3",
+        "drupal/site_map": "1.3",
+        "drupal/smart_trim": "1.5",
+        "drupal/strongarm": "2.0",
+        "drupal/styleguide": "1.1",
+        "drupal/themekey": "3.4",
+        "drupal/token": "1.6",
+        "drupal/transliteration": "3.2",
+        "drupal/typogrify": "1.0-rc10",
+        "drupal/variable": "2.5",
+        "drupal/views": "3.13",
+        "drupal/views_book_chapter": "1.1",
+        "drupal/views_bulk_operations": "3.3",
+        "drupal/views_distinct": "1.0",
+        "drupal/views_slideshow": "3.1",
+        "drupal/views_url_path_arguments": "1.1",
+        "drupal/vimeo_link_formatter": "1.3",
+        "drupal/webform": "4.20",
+        "drupal/webform_layout": "2.3",
+        "drupal/webform_localization": "4.2",
+        "drupal/webform_phone": "1.23",
+        "drupal/webform_remote_post": "1.23",
+        "drupal/workbench_moderation": "1.4",
+        "drupal/wysiwyg": "2.2",
+        "drupal/xmlsitemap": "2.2",
+        "drush/drush": "^8.0",
+        "malsup/cycle": "3.0.3",
+        "moxiecode/plupload": "1.5.7",
+        "mustangostang/spyc": "0.5.1",
+        "niklasvh/html2canvas": "0.4.1",
+        "serbanghita/mobile-detect": "2.8.17",
+        "symfony/filesystem": "~2.7|^3",
+        "webflo/drupal-finder": "^1.0.0"
+    },
+    "conflict": {
+        "drupal/core": "8.*"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "classmap": [
+            "scripts/composer/ScriptHandler.php"
+        ]
+    },
+    "scripts": {
+        "pre-install-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::checkComposerVersion"
+        ],
+        "pre-update-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::checkComposerVersion"
+        ],
+        "post-install-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
+        ],
+        "post-update-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
+        ],
+        "post-create-project-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::removeInternalFiles"
+        ]
+    },
+    "extra": {
+        "installer-paths": {
+            "web/": ["type:drupal-core"],
+            "web/profiles/{$name}/": ["type:drupal-profile"],
+            "web/sites/all/drush/{$name}/": ["type:drupal-drush"],
+            "web/sites/all/libraries/{$name}/": ["type:drupal-library"],
+            "web/sites/all/modules/contrib/{$name}/": ["type:drupal-module"],
+            "web/sites/all/themes/contrib/{$name}/": ["type:drupal-theme"]
+        },
+        "patches": {
+            "cweagans/composer-patches": {
+                "Call the preserve paths hooks" : "https://github.com/SebCorbin/composer-patches/commit/1cb9bacba51f8bba0c5f3f322c3bb61e4ceae974.patch"
+            },
+            "drupal/drupal": {
+                "Add inclusion of a settings.local.php file in settings.php": "https://www.drupal.org/files/issues/add_inclusion_of_a-1118520-43.patch"
+            }
+        },
+        "preserve-paths": [
+            "web/sites"
+        ]
+    }
+}
