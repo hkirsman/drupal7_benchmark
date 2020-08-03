@@ -151,7 +151,7 @@
         "drupal/devel": "1.7",
         "drupal/diff": "3.2",
         "drupal/draggable_captcha": "1.2",
-        "drupal/drupal": "7.43",
+        "drupal/drupal": "7.72.0",
         "drupal/ds": "2.13",
         "drupal/elysia_cron": "2.1",
         "drupal/email": "1.3",
