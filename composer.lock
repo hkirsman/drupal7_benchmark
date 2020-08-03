@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5df961bef4924871f8d04504dd5019a2",
+    "content-hash": "3a242e505d44d7d209dfca92ecf6cc3b",
     "packages": [
         {
             "name": "composer/installers",
@@ -729,17 +729,17 @@
         },
         {
             "name": "drupal/admin_menu",
-            "version": "3.0.0-rc5",
+            "version": "3.0.0-rc6",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/admin_menu.git",
-                "reference": "7.x-3.0-rc5"
+                "reference": "7.x-3.0-rc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/admin_menu-7.x-3.0-rc5.zip",
-                "reference": "7.x-3.0-rc5",
-                "shasum": "64de77d5b1ed7158549a4fc6f2fd657aaacdaead"
+                "url": "https://ftp.drupal.org/files/projects/admin_menu-7.x-3.0-rc6.zip",
+                "reference": "7.x-3.0-rc6",
+                "shasum": "c2c554aed8c8db494831ef3edf900d53f03d83a7"
             },
             "require": {
                 "drupal/drupal": "^7.11"
@@ -747,7 +747,7 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "7.x-3.0-rc5",
+                    "version": "7.x-3.0-rc6",
                     "datestamp": "1543859280",
                     "security-coverage": {
                         "status": "not-covered",
@@ -1736,17 +1736,17 @@
         },
         {
             "name": "drupal/colorfield",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/colorfield.git",
-                "reference": "7.x-1.1"
+                "reference": "7.x-1.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/colorfield-7.x-1.1.zip",
-                "reference": "7.x-1.1",
-                "shasum": "311476bd96986804d88f5318e122475723a6e3fd"
+                "url": "https://ftp.drupal.org/files/projects/colorfield-7.x-1.2.zip",
+                "reference": "7.x-1.2",
+                "shasum": "c00e2e7e20600e6e94f5fa8f289149ba40ddc3b6"
             },
             "require": {
                 "drupal/drupal": "~7.0"
@@ -1761,7 +1761,7 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "7.x-1.1",
+                    "version": "7.x-1.2",
                     "datestamp": "1517403485",
                     "security-coverage": {
                         "status": "covered",
@@ -2262,17 +2262,17 @@
         },
         {
             "name": "drupal/ctools",
-            "version": "1.9.0",
+            "version": "1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/ctools.git",
-                "reference": "7.x-1.9"
+                "reference": "7.x-1.15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/ctools-7.x-1.9.zip",
-                "reference": "7.x-1.9",
-                "shasum": "cf1fb254f70b9b50f905be769378fdfa3eb255e0"
+                "url": "https://ftp.drupal.org/files/projects/ctools-7.x-1.15.zip",
+                "reference": "7.x-1.15",
+                "shasum": "d55e992f3c68dc663505b3e68a0418fee17cf960"
             },
             "require": {
                 "drupal/drupal": "~7.0"
@@ -2286,8 +2286,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "7.x-1.9",
-                    "datestamp": "1471454080",
+                    "version": "7.x-1.15",
+                    "datestamp": "1549603684",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2752,30 +2752,30 @@
         },
         {
             "name": "drupal/drupal",
-            "version": "7.43.0",
+            "version": "7.72.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/drupal.git",
-                "reference": "7.43"
+                "reference": "7.72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/drupal-7.43.zip",
-                "reference": "7.43",
-                "shasum": "190163a2cfdf5dfa68e8530495fd4097b339b4cc"
+                "url": "https://ftp.drupal.org/files/projects/drupal-7.72.zip",
+                "reference": "7.72",
+                "shasum": "0cb4cf16f4f7e9957e16978ff5504c70cf0314e6"
             },
             "type": "drupal-core",
             "extra": {
                 "drupal": {
-                    "version": "7.43",
-                    "datestamp": "1522264797",
+                    "version": "7.72",
+                    "datestamp": "1592419880",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
                     }
                 },
                 "patches_applied": {
-                    "Add inclusion of a settings.local.php file in settings.php": "https://www.drupal.org/files/issues/add_inclusion_of_a-1118520-43.patch"
+                    "Add inclusion of a settings.local.php file in settings.php": "https://www.drupal.org/files/issues/2019-02-22/drupal-7.64-1118520.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/7/downloads",
@@ -6719,7 +6719,7 @@
         },
         {
             "name": "drupal/page_manager",
-            "version": "1.9.0",
+            "version": "1.15.0",
             "require": {
                 "drupal/ctools": "self.version",
                 "drupal/drupal": "~7.0"
@@ -6727,8 +6727,8 @@
             "type": "metapackage",
             "extra": {
                 "drupal": {
-                    "version": "7.x-1.9",
-                    "datestamp": "1471454080",
+                    "version": "7.x-1.15",
+                    "datestamp": "1549603684",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -6844,20 +6844,20 @@
         },
         {
             "name": "drupal/panels",
-            "version": "3.5.0",
+            "version": "3.10.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/panels.git",
-                "reference": "7.x-3.5"
+                "reference": "7.x-3.10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/panels-7.x-3.5.zip",
-                "reference": "7.x-3.5",
-                "shasum": "7a2d34d842b86b154768c93ade9aca8042958139"
+                "url": "https://ftp.drupal.org/files/projects/panels-7.x-3.10.zip",
+                "reference": "7.x-3.10",
+                "shasum": "9d9a1c7820dd64a6daec3ecd1cd01243ef00597c"
             },
             "require": {
-                "drupal/ctools": "^1.6",
+                "drupal/ctools": "*",
                 "drupal/drupal": "~7.0"
             },
             "require-dev": {
@@ -6868,8 +6868,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "7.x-3.5",
-                    "datestamp": "1533185792",
+                    "version": "7.x-3.10",
+                    "datestamp": "1593990785",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -6930,32 +6930,32 @@
         },
         {
             "name": "drupal/panels_everywhere",
-            "version": "1.0.0-rc2",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/panels_everywhere.git",
-                "reference": "7.x-1.0-rc2"
+                "reference": "7.x-1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/panels_everywhere-7.x-1.0-rc2.zip",
-                "reference": "7.x-1.0-rc2",
-                "shasum": "359ac77fc817502e2573b2de808a016149647d97"
+                "url": "https://ftp.drupal.org/files/projects/panels_everywhere-7.x-1.0.zip",
+                "reference": "7.x-1.0",
+                "shasum": "eb2c4d6fef10ccd15dc9add50e8656c373be6708"
             },
             "require": {
-                "drupal/ctools": "^1.4",
+                "drupal/ctools": "*",
                 "drupal/drupal": "~7.0",
                 "drupal/page_manager": "*",
-                "drupal/panels": "^3.4"
+                "drupal/panels": "*"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "7.x-1.0-rc2",
+                    "version": "7.x-1.0",
                     "datestamp": "1524187684",
                     "security-coverage": {
-                        "status": "not-covered",
-                        "message": "RC releases are not covered by Drupal security advisories."
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
                     }
                 }
             },
@@ -7177,33 +7177,39 @@
         },
         {
             "name": "drupal/rabbit_hole",
-            "version": "2.23.0",
+            "version": "2.25.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/rabbit_hole.git",
-                "reference": "7.x-2.23"
+                "reference": "7.x-2.25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/rabbit_hole-7.x-2.23.zip",
-                "reference": "7.x-2.23",
-                "shasum": "33b8cb5a931d4ccedea123a0e633a1eaf32aeb71"
+                "url": "https://ftp.drupal.org/files/projects/rabbit_hole-7.x-2.25.zip",
+                "reference": "7.x-2.25",
+                "shasum": "51c89508a4b2a9a023f8abc9deea75d8fca9595d"
             },
             "require": {
                 "drupal/drupal": "~7.0"
             },
             "require-dev": {
-                "drupal/file_entity": "*"
+                "drupal/bean": "*",
+                "drupal/field_collection": "*",
+                "drupal/file_entity": "*",
+                "drupal/profile2_page": "*"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "7.x-2.23",
-                    "datestamp": "1551291078",
+                    "version": "7.x-2.25",
+                    "datestamp": "1551291144",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
                     }
+                },
+                "patches_applied": {
+                    "[PHP 7.4] Notice: Trying to access array offset on value of type null in rabbit_hole_menu_local_tasks_alter()": "https://www.drupal.org/files/issues/2020-07-23/rabbit_hole_01_3160977.patch"
                 }
             },
             "notification-url": "https://packages.drupal.org/7/downloads",
@@ -9544,10 +9550,10 @@
         },
         {
             "name": "moxiecode/plupload",
-            "version": "1.5.7",
+            "version": "1.5.8",
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/moxiecode/plupload/archive/1.5.7.zip"
+                "url": "https://github.com/moxiecode/plupload/archive/v1.5.8.zip"
             },
             "type": "drupal-library",
             "extra": {
