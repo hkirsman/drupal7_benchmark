@@ -5,10 +5,6 @@ config:
   php: '7.4'
   via: nginx
   database: mariadb:10.2
-services:
-  appserver:
-    # Add Mutagen support - fast host <-> container file sharing in Mac.
-    app_mount: delegated
 tooling:
   drush:
     service: appserver
