@@ -6,6 +6,7 @@ config:
   via: nginx
   database: mariadb:10.2
   composer_version: '1.10.24'
+  xdebug: false
 tooling:
   drush:
     service: appserver

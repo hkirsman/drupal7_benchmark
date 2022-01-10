@@ -19,7 +19,6 @@ cd drupal7_benchmark
 lando start
 lando composer install
 lando db-import db.sql
-lando restart # Needed until next Lando, will disable xdebug for extras speed.
 ```
 
 ### b) Local install
