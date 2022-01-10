@@ -300,11 +300,17 @@
             "cweagans/composer-patches": {
                 "Call the preserve paths hooks" : "https://github.com/SebCorbin/composer-patches/commit/1cb9bacba51f8bba0c5f3f322c3bb61e4ceae974.patch"
             },
+            "drupal/colorfield": {
+                "PHP 7.4 compability": "https://www.drupal.org/files/issues/2020-10-09/colorfield-php74-3163653-3.patch"
+            },
             "drupal/drupal": {
                 "Add inclusion of a settings.local.php file in settings.php": "https://www.drupal.org/files/issues/2019-02-22/drupal-7.64-1118520.patch"
             },
             "drupal/rabbit_hole": {
                 "[PHP 7.4] Notice: Trying to access array offset on value of type null in rabbit_hole_menu_local_tasks_alter()": "https://www.drupal.org/files/issues/2020-07-23/rabbit_hole_01_3160977.patch"
+            },
+            "drupal/themekey": {
+                "PHP 7.4 compability": "https://www.drupal.org/files/issues/2020-04-16/themekey-PHPCompatibility-3128131-2.patch"
             }
         },
         "preserve-paths": [
