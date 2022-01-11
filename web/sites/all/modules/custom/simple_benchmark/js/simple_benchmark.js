@@ -30,11 +30,10 @@
       });
       var timesAverage = totalTime / timesAll.length;
 
-      $('.simple-benchmark .current').html(
-        '<strong>' + Drupal.t('Best') + '</strong>' + ': ' +  timeBest + '<br>' +
-        '<strong>' + Drupal.t('Average') + '</strong>' + ': ' +  Math.round(timesAverage)
-        //'<strong>' + Drupal.t('Worst') + '</strong>' + ': ' +  timeWorst*/
-      );
+      $('.simple-benchmark__results_table_total').html(totalTime);
+      $('.simple-benchmark__results_table_average').html(Math.round(timesAverage));
+      $('.simple-benchmark__results_table_best').html(timeBest);
+      $('.simple-benchmark__results_table_worst').html(timeWorst);
 
       testCount++;
 
